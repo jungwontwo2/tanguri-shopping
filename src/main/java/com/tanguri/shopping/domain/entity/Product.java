@@ -14,15 +14,15 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
-    @OneToOne(mappedBy = "product")
+    @OneToOne(mappedBy = "product",fetch = FetchType.LAZY)
     private Image image;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
 
-    @OneToMany(mappedBy = "product")
-    private List<CartItem> cartItems;
+    @OneToOne(mappedBy = "product",fetch = FetchType.LAZY)
+    private CartItem cartItem;
 
     private Integer stock;
     private String detail;

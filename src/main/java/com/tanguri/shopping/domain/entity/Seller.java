@@ -16,7 +16,7 @@ public class Seller {
     @Column(name = "seller_id")
     private Long id;
 
-    @OneToMany(mappedBy = "seller")
+    @OneToMany(mappedBy = "seller",fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 
     private Integer earning;

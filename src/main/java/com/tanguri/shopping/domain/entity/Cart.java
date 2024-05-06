@@ -14,11 +14,11 @@ public class Cart {
     @Column(name = "cart_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart",fetch = FetchType.LAZY)
     private List<CartItem> cartItems = new ArrayList<>();
 
     private Integer count;

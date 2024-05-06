@@ -15,10 +15,10 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",fetch = FetchType.LAZY)
     private Cart cart;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
 
     private String username;

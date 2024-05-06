@@ -11,7 +11,7 @@ public class Image {
     @Column(name = "image_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
