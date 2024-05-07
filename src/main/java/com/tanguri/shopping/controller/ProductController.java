@@ -8,8 +8,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class ProductController {
 
-    @GetMapping("/")
-    public String mainPage(){
-        return "home/home";
-    }
+
 }

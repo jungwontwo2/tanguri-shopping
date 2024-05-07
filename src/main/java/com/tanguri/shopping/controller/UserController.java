@@ -1,11 +1,17 @@
 package com.tanguri.shopping.controller;
 
 import com.tanguri.shopping.domain.dto.ResponseDto;
+import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
+import com.tanguri.shopping.domain.dto.user.UserLoginDto;
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
 import com.tanguri.shopping.domain.entity.User;
+import com.tanguri.shopping.service.LoginService;
 import com.tanguri.shopping.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +21,22 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final LoginService loginService;
+
+    @GetMapping("/")
+    public String mainPage(){
+        return "home/home";
+    }
+    //구매자 로그인
+    @GetMapping("/user/home")
+    public String loginUserHome(Model model, Authentication authentication){
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+        String username = principal.getUsername();
+        model.addAttribute("user",userService.getUserByLoginId(username));
+        return "home/home";
+    }
+
+
     @GetMapping("/user/signup")
     public String SignUpPage(@ModelAttribute("user")UserSignUpDto userSignUpDto){
         return "user/usersignup";
@@ -30,7 +52,23 @@ public class UserController {
         userService.saveUser(userSignUpDto);
         return "redirect:/";
     }
+    @GetMapping("user/login")
+    public String LoginPage(@ModelAttribute("user") UserLoginDto userLoginDto){
+        return "user/userlogin";
+    }
 
+    @PostMapping("user/login")
+    public String PostLogin(@Validated @ModelAttribute("user") UserLoginDto userLoginDto,BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "user/userlogin";
+        }
+        User user = loginService.login(userLoginDto.getUsername(), userLoginDto.getPassword());
+        if(user==null){
+            bindingResult.reject("loginFail","아이디 또는 비밀번호가 맞지 않습니다.");
+            return "user/userlogin";
+        }
+        return "redirect:/user/home";
+    }
     @RequestMapping(value = "/user/signup/loginIdCheck")
     public @ResponseBody ResponseDto<?> check(@RequestBody(required = false) String loginId)  {
         if(loginId==null || loginId.isEmpty()){

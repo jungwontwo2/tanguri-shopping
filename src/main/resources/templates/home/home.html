@@ -36,7 +36,7 @@
                 </li>
             </ul>
             <div sec:authorize="!isAuthenticated()">
-                <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{/login}'|">
+                <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{/user/login}'|">
                     로그인
                 </button>
             </div>
@@ -51,7 +51,7 @@
                 </button>
             </div>
             <form class="d-flex" sec:authorize="hasRole('ROLE_USER')">
-                <a class="btn btn-outline-dark" th:href="@{/user/cash/{id}(id=${user.getId()})}" th:text="|현재잔액 : ${user.getCoin()} ₩|">
+                <a class="btn btn-outline-dark" th:href="@{/user/cash/{id}(id=${user.getId()})}" th:text="|현재잔액 : ${user.getMoney()} ₩|">
                     현재잔액 : 10000 ₩
                 </a>
                 <div class="dropdown">
@@ -110,28 +110,28 @@
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
 
             <!-- 첫번째 아이템 -->
-            <div class="col mb-5" th:each="item : ${items}">
-                <div class="card h-100">
-                    <!-- Product image-->
-                    <img class="card-img-top" th:src="@{${item.getImgPath()}}" alt="..." />
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name\-->
-                            <h5 class="fw-bolder" th:text="${item.getName()}">아이템이름</h5>
-                            <!-- Product price-->
-                            <p th:text="|${item.getPrice()} 원|">아이템 가격</p>
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center">
-                            <a class="btn btn-outline-dark mt-auto" sec:authorize="isAuthenticated()" th:href="@{/item/view/{id}(id=${item.getId()})}">상세보기</a>
-                            <a class="btn btn-outline-dark mt-auto" sec:authorize="!isAuthenticated()" th:href="@{/item/view/nonlogin/{id}(id=${item.getId()})}">상세보기</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--            <div class="col mb-5" th:each="item : ${items}">-->
+<!--                <div class="card h-100">-->
+<!--                    &lt;!&ndash; Product image&ndash;&gt;-->
+<!--                    <img class="card-img-top" th:src="@{${item.getImgPath()}}" alt="..." />-->
+<!--                    &lt;!&ndash; Product details&ndash;&gt;-->
+<!--                    <div class="card-body p-4">-->
+<!--                        <div class="text-center">-->
+<!--                            &lt;!&ndash; Product name\&ndash;&gt;-->
+<!--                            <h5 class="fw-bolder" th:text="${item.getName()}">아이템이름</h5>-->
+<!--                            &lt;!&ndash; Product price&ndash;&gt;-->
+<!--                            <p th:text="|${item.getPrice()} 원|">아이템 가격</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash; Product actions&ndash;&gt;-->
+<!--                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">-->
+<!--                        <div class="text-center">-->
+<!--                            <a class="btn btn-outline-dark mt-auto" sec:authorize="isAuthenticated()" th:href="@{/item/view/{id}(id=${item.getId()})}">상세보기</a>-->
+<!--                            <a class="btn btn-outline-dark mt-auto" sec:authorize="!isAuthenticated()" th:href="@{/item/view/nonlogin/{id}(id=${item.getId()})}">상세보기</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
 
         </div>
     </div>
