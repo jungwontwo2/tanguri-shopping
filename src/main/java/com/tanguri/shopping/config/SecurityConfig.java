@@ -30,7 +30,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/admin").hasRole("ADMIN")//admin페이지에는 ADMIN이라는 Role을 가지고 있어야 가능
                 .requestMatchers("/users/my/**","/contents/write","/contents/comment/**","/contents/editPage/**","/contents/delete/**").hasAnyRole("ADMIN", "USER")//여기는 ADMIN이나 USER 둘중 아무거나 있으면 가능
-                .requestMatchers("/", "/login", "/signup","/join/loginIdCheck","/join/nickNameCheck","/contents/**","/contents","/error").permitAll()//해당 사이트면 모두 허용
+                .requestMatchers("/", "/login", "/user/signup/**","/user/signup","/seller/signup","/join/loginIdCheck","/join/nickNameCheck","/contents/**","/contents","/error").permitAll()//해당 사이트면 모두 허용
                 .anyRequest().authenticated()//나머지는 로그인 했으면 가능
         );
 
