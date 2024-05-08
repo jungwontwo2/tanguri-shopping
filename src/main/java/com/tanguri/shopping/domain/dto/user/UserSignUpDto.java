@@ -2,6 +2,7 @@ package com.tanguri.shopping.domain.dto.user;
 
 import com.tanguri.shopping.domain.entity.User;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -49,8 +50,13 @@ public class UserSignUpDto {
     @Pattern(regexp = "^01(0|1|[6-9])[0-9]{3,4}[0-9]{4}", message = "10 ~ 11 자리의 숫자만 입력 가능합니다.")
     private String phone;
 
+    @NotNull(message = "판매자나 구매자를 선택해주세요")
+    private Boolean isSeller;
+
+
     public static User SingUpDtoToEntity(String username,String password,String email,String name,
-                                         String addressNumber,String address, String detailAddress, String phone,String role){
-        return new User(username,password,email, name, addressNumber,address, detailAddress, phone, role);
+                                         String addressNumber,String address, String detailAddress,
+                                         boolean isSeller,String phone){
+        return new User(username,password,email, name, addressNumber,address, detailAddress,isSeller, phone);
     }
 }

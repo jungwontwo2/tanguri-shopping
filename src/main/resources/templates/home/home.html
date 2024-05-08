@@ -50,7 +50,7 @@
                     판매자 회원가입
                 </button>
             </div>
-            <form class="d-flex" sec:authorize="hasRole('ROLE_USER')">
+            <form class="d-flex" sec:authorize="hasRole('ROLE_BUYER')">
                 <a class="btn btn-outline-dark" th:href="@{/user/cash/{id}(id=${user.getId()})}" th:text="|현재잔액 : ${user.getMoney()} ₩|">
                     현재잔액 : 10000 ₩
                 </a>

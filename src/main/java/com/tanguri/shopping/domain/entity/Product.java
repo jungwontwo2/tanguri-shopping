@@ -18,8 +18,8 @@ public class Product {
     private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
-    private Seller seller;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToOne(mappedBy = "product",fetch = FetchType.LAZY)
     private CartItem cartItem;

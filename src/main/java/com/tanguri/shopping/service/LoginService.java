@@ -15,7 +15,6 @@ public class LoginService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public User login(String username, String password){
-        System.out.println("password = " + password);
         Optional<User> user = userRepository.findByLoginId(username);
         if(bCryptPasswordEncoder.matches(password,user.get().getPassword())){
             return user.get();

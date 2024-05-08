@@ -16,9 +16,9 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = false)
 @RequiredArgsConstructor
-@Order(2)
+@Order(1)
 public class UserSecurityConfig {
 
     private final AuthenticationFailureHandler CustomAuthFailureHandler;
@@ -32,15 +32,16 @@ public class UserSecurityConfig {
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/admin").hasRole("ADMIN")//admin페이지에는 ADMIN이라는 Role을 가지고 있어야 가능
                 .requestMatchers("/users/my/**","/contents/write","/contents/comment/**","/contents/editPage/**","/contents/delete/**").hasAnyRole("ADMIN", "USER")//여기는 ADMIN이나 USER 둘중 아무거나 있으면 가능
-                .requestMatchers("/", "/user/login", "/user/signup/**","/user/signup","/join/loginIdCheck","/join/nickNameCheck","/contents/**","/contents","/error").permitAll()//해당 사이트면 모두 허용
+                .requestMatchers("/", "/user/login", "/user/signup/**","/user/signup","/seller/signup","/join/loginIdCheck","/join/nickNameCheck","/contents/**","/contents","/error").permitAll()//해당 사이트면 모두 허용
                 .anyRequest().authenticated()//나머지는 로그인 했으면 가능
+
         );
 
         http.formLogin((auth) -> auth.loginPage("/user/login")//로그인 페이지
                 .loginProcessingUrl("/user/login")//포스트 보내면 어디로 가는지
                 .usernameParameter("username")
                 .failureHandler(CustomAuthFailureHandler)
-                .defaultSuccessUrl("/user/home")
+                .defaultSuccessUrl("/")
                 .permitAll());
 
 
@@ -50,9 +51,9 @@ public class UserSecurityConfig {
 
         http.csrf((auth)->auth.disable());
 
-        http.sessionManagement((auth) -> auth.maximumSessions(1).maxSessionsPreventsLogin(true));//true: 새로운 로그인 차단 false: 기존 세션 하나 삭제
+        //http.sessionManagement((auth) -> auth.maximumSessions(1).maxSessionsPreventsLogin(true));//true: 새로운 로그인 차단 false: 기존 세션 하나 삭제
 
-        http.sessionManagement((session) -> session.sessionFixation((sessionFixation) -> sessionFixation.newSession()));//로그인 시 동일한 세션에 대한 id 변경
+        //http.sessionManagement((session) -> session.sessionFixation((sessionFixation) -> sessionFixation.newSession()));//로그인 시 동일한 세션에 대한 id 변경
 
 
         return http.build();

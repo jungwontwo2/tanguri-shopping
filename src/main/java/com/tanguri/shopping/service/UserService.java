@@ -19,7 +19,7 @@ public class UserService {
         User user = UserSignUpDto.SingUpDtoToEntity(userSignUpDto.getUsername(),bCryptPasswordEncoder.encode(userSignUpDto.getPassword())
                 ,userSignUpDto.getEmail(),userSignUpDto.getName()
                 ,userSignUpDto.getAddressNumber(),userSignUpDto.getAddress()
-                ,userSignUpDto.getDetailAddress(),userSignUpDto.getPhone(),"ROLE_USER");
+                ,userSignUpDto.getDetailAddress(),userSignUpDto.getIsSeller(),userSignUpDto.getPhone());
         userRepository.save(user);
     }
 

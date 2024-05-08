@@ -23,6 +23,8 @@ public class User {
     private Cart cart;
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Product> products = new ArrayList<>();
     private String username;
     private String password;
     private String email;
@@ -33,10 +35,11 @@ public class User {
     private String phone;
     private String role;
     private Integer money;
+    private Integer earning;
     private LocalDateTime createDate;
 
     public User(String username,String password,String email,String name,
-                String addressNumber,String address,String detailAddress,String phone,String role){
+                String addressNumber,String address,String detailAddress,boolean isSeller,String phone){
         this.username=username;
         this.password=password;
         this.email=email;
@@ -46,7 +49,8 @@ public class User {
         this.detailAddress =detailAddress;
         this.phone=phone;
         money=0;
+        earning=0;
         createDate=LocalDateTime.now();
-        this.role=role;
+        this.role=isSeller? "ROLE_SELLER":"ROLE_BUYER";
     }
 }

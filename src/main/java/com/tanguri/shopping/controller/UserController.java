@@ -24,18 +24,12 @@ public class UserController {
     private final LoginService loginService;
 
     @GetMapping("/")
-    public String mainPage(){
+    public String mainPage(Model model,@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        if(customUserDetails!=null){
+            model.addAttribute("user", customUserDetails.getUserEntity());
+        }
         return "home/home";
     }
-    //구매자 로그인
-    @GetMapping("/user/home")
-    public String loginUserHome(Model model, Authentication authentication){
-        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-        String username = principal.getUsername();
-        model.addAttribute("user",userService.getUserByLoginId(username));
-        return "home/home";
-    }
-
 
     @GetMapping("/user/signup")
     public String SignUpPage(@ModelAttribute("user")UserSignUpDto userSignUpDto){
@@ -52,12 +46,12 @@ public class UserController {
         userService.saveUser(userSignUpDto);
         return "redirect:/";
     }
-    @GetMapping("user/login")
+    @GetMapping("/user/login")
     public String LoginPage(@ModelAttribute("user") UserLoginDto userLoginDto){
         return "user/userlogin";
     }
 
-    @PostMapping("user/login")
+    @PostMapping("/user/login")
     public String PostLogin(@Validated @ModelAttribute("user") UserLoginDto userLoginDto,BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return "user/userlogin";
@@ -67,7 +61,7 @@ public class UserController {
             bindingResult.reject("loginFail","아이디 또는 비밀번호가 맞지 않습니다.");
             return "user/userlogin";
         }
-        return "redirect:/user/home";
+        return "redirect:/";
     }
     @RequestMapping(value = "/user/signup/loginIdCheck")
     public @ResponseBody ResponseDto<?> check(@RequestBody(required = false) String loginId)  {
