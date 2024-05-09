@@ -42,12 +42,7 @@
             </div>
             <div sec:authorize="!isAuthenticated()">
                 <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{/user/signup}'|">
-                    구입자 회원가입
-                </button>
-            </div>
-            <div sec:authorize="!isAuthenticated()">
-                <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{/seller/signup}'|">
-                    판매자 회원가입
+                    회원가입
                 </button>
             </div>
             <form class="d-flex" sec:authorize="hasRole('ROLE_BUYER')">

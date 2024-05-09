@@ -79,4 +79,9 @@ public class UserController {
             return new ResponseDto<>(1,"중복된 아이디입니다.",false);
         }
     }
+
+    @PostMapping("/logout")
+    public String logout(){
+        return "redirect:/";
+    }
 }

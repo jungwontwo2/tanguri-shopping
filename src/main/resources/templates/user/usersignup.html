@@ -24,7 +24,7 @@
                     <div class="card-body p-md-5">
                         <div class="row justify-content-center">
                             <div class="col-md-10 col-lg-6 col-xl-6 order-2 order-lg-1">
-                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">회원가입</p>
+                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-1">회원가입</p>
 
 
                                 <form id="signupForm" action="/user/signup" method="post" class="mx-1 mx-md-4" th:object="${user}">
@@ -114,8 +114,10 @@
                                         <i class="fas fa-key fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <label class="form-label">회원구분</label><br/>
-                                            <input type="radio" name="isSeller" id="buyer" value="false"  >구매자<br/>
-                                            <input type="radio" name="isSeller" id="seller" value="true"  >판매자<br/>
+                                            <div style="display: flex; align-items: center;">
+                                                <input type="radio" name="isSeller" id="buyer" value="false"  >구매자<br/>
+                                                <input type="radio" name="isSeller" id="seller" value="true"  >판매자<br/>
+                                            </div>
                                         </div>
                                         <div class="field-error" th:errors="*{isSeller}" />
                                     </div>

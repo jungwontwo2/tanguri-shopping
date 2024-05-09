@@ -39,7 +39,7 @@ public class UserSignUpDto {
     @Pattern(regexp = "^[0-9]+$", message = "숫자만 입력 가능합니다.")
     private String addressNumber;
     @NotBlank(message = "주소를 입력하세요")
-    @Pattern(regexp = "^[가-힣0-9a-zA-Z\s]+$",message = "숫자 한글 영어만 입력 가능합니다.")
+    @Pattern(regexp = "^[가-힣0-9a-zA-Z\\s-.,()]+$",message = "숫자 한글 영어만 입력 가능합니다.")
     private String address;
 
     @NotBlank(message = "상세주소를 입력하세요")
