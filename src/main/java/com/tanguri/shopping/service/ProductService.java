@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,7 +35,7 @@ public class ProductService {
         String originalFilename = image.getOriginalFilename();
         String imgName = "";
 
-        String projectPath = System.getProperty("user.dir") + "/src/main/resources/static/files/";
+        String projectPath = "C:/Temp/productImage/";
 
         // UUID 를 이용하여 파일명 새로 생성
         // UUID - 서로 다른 객체들을 구별하기 위한 클래스
