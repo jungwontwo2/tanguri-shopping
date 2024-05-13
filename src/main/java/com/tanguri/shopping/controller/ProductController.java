@@ -1,6 +1,7 @@
 package com.tanguri.shopping.controller;
 
 import com.tanguri.shopping.domain.dto.product.AddProductDto;
+import com.tanguri.shopping.domain.dto.product.ViewProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.entity.User;
 import com.tanguri.shopping.service.ProductService;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.IOException;
@@ -37,6 +39,13 @@ public class ProductController {
         }
         productService.uploadProduct(addProductDto,customUserDetails.getId());
         return "redirect:/";
+    }
+
+    @GetMapping("product/{id}")
+    public String viewProduct(@PathVariable("id") Long id,Model model){
+        ViewProductDto product = productService.getProduct(id);
+        model.addAttribute("product",product);
+        return "product/ProductView";
     }
 
 }

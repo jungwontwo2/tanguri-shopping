@@ -2,6 +2,7 @@ package com.tanguri.shopping.service;
 
 import com.tanguri.shopping.domain.dto.product.AddProductDto;
 import com.tanguri.shopping.domain.dto.product.PagingProductDto;
+import com.tanguri.shopping.domain.dto.product.ViewProductDto;
 import com.tanguri.shopping.domain.entity.Image;
 import com.tanguri.shopping.domain.entity.Product;
 import com.tanguri.shopping.domain.entity.User;
@@ -79,5 +80,10 @@ public class ProductService {
 //            System.out.println("pagingProductDto.getName() = " + pagingProductDto.getName());
 //        }
         return pagingProductDtos;
+    }
+
+    public ViewProductDto getProduct(Long id) {
+        Product product = productRepository.findById(id).orElse(null);
+        return new ViewProductDto(product);
     }
 }

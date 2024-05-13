@@ -6,12 +6,14 @@ import lombok.Data;
 
 @Data
 public class PagingProductDto {
+    private Long id;
     private String name;
     private Integer price;
     private String imageUrl;
     private String status;
 
     public PagingProductDto(Product product){
+        this.id=product.getId();
         this.name=product.getName();
         this.imageUrl=product.getImage().getImage_url();
         this.price=product.getPrice();
