@@ -1,13 +1,18 @@
 package com.tanguri.shopping.controller;
 
 import com.tanguri.shopping.domain.dto.ResponseDto;
+import com.tanguri.shopping.domain.dto.product.PagingProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.dto.user.UserLoginDto;
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
 import com.tanguri.shopping.domain.entity.User;
 import com.tanguri.shopping.service.LoginService;
+import com.tanguri.shopping.service.ProductService;
 import com.tanguri.shopping.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -22,12 +27,24 @@ public class UserController {
 
     private final UserService userService;
     private final LoginService loginService;
+    private final ProductService productService;
 
     @GetMapping("/")
-    public String mainPage(Model model,@AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public String mainPage(@PageableDefault(page = 1) Pageable pageable,
+                           Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails){
         if(customUserDetails!=null){
             model.addAttribute("user", customUserDetails.getUserEntity());
         }
+        Page<PagingProductDto> allProducts = productService.getAllProducts(pageable);
+        for (PagingProductDto allProduct : allProducts) {
+            System.out.println("allProduct.getImageUrl() = " + allProduct.getImageUrl());
+        }
+        int blockLimit = 5;
+        int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = Math.min((startPage + blockLimit - 1), allProducts.getTotalPages());
+        model.addAttribute("productDtos", allProducts);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
         return "home/home";
     }
 

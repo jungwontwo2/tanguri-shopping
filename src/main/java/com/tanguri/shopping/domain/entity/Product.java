@@ -2,14 +2,18 @@ package com.tanguri.shopping.domain.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +22,9 @@ public class Product {
 
     @OneToOne(mappedBy = "product",fetch = FetchType.LAZY)
     private Image image;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "image_id")
+//    private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

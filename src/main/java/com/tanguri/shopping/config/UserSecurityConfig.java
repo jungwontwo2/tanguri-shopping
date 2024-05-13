@@ -71,7 +71,7 @@ public class UserSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .requestMatchers("/css/**", "style.css");
+                .requestMatchers("/css/**", "style.css","/files/**");
     }
 
 }
