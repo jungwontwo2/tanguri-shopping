@@ -7,37 +7,26 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity(name = "Orders")
+@Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Order {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    @OneToOne(mappedBy = "order",fetch = FetchType.LAZY)
-    private Delivery delivery;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "product_id")
 
     private Long productId;
+    private String productName;
     private Integer productPrice;
     private Integer productCount;
-    private LocalDateTime orderDate;
-
-    @Enumerated(EnumType.STRING)
     private Status status;
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

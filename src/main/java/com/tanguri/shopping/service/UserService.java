@@ -2,8 +2,10 @@ package com.tanguri.shopping.service;
 
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
 import com.tanguri.shopping.domain.entity.Cart;
+import com.tanguri.shopping.domain.entity.Order;
 import com.tanguri.shopping.domain.entity.User;
 import com.tanguri.shopping.repository.CartRepository;
+import com.tanguri.shopping.repository.OrderRepository;
 import com.tanguri.shopping.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

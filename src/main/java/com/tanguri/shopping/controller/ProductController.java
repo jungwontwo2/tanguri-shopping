@@ -1,6 +1,7 @@
 package com.tanguri.shopping.controller;
 
 import com.tanguri.shopping.domain.dto.product.AddProductDto;
+import com.tanguri.shopping.domain.dto.product.BuyOrCartProductDto;
 import com.tanguri.shopping.domain.dto.product.ViewProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.entity.User;
@@ -42,13 +43,23 @@ public class ProductController {
     }
 
     @GetMapping("product/{id}")
-    public String viewProduct(@PathVariable("id") Long id,Model model,@AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public String viewProduct(@PathVariable("id") Long id, Model model,
+                              @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                              @ModelAttribute("buyOrCartProductDto")BuyOrCartProductDto buyOrCartProductDto){
         if(customUserDetails!=null){
             model.addAttribute("user", customUserDetails.getUserEntity());
         }
         ViewProductDto product = productService.getProduct(id);
         model.addAttribute("product",product);
         return "product/ProductView";
+    }
+    @PostMapping("product/order/{productId}")
+    public String buyProduct(@PathVariable("productId")Long productId,
+                             @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                             @ModelAttribute("product") BuyOrCartProductDto buyOrCartProductDto){
+        productService.orderProduct(productId,customUserDetails.getId(),buyOrCartProductDto);
+        System.out.println("buyOrCartProductDto = " + buyOrCartProductDto.getCount());
+        return "redirect:/product/"+productId;
     }
 
 }

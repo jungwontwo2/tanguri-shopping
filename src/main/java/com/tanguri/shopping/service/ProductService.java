@@ -1,14 +1,12 @@
 package com.tanguri.shopping.service;
 
 import com.tanguri.shopping.domain.dto.product.AddProductDto;
+import com.tanguri.shopping.domain.dto.product.BuyOrCartProductDto;
 import com.tanguri.shopping.domain.dto.product.PagingProductDto;
 import com.tanguri.shopping.domain.dto.product.ViewProductDto;
-import com.tanguri.shopping.domain.entity.Image;
-import com.tanguri.shopping.domain.entity.Product;
-import com.tanguri.shopping.domain.entity.User;
-import com.tanguri.shopping.repository.ImageRepository;
-import com.tanguri.shopping.repository.ProductRepository;
-import com.tanguri.shopping.repository.UserRepository;
+import com.tanguri.shopping.domain.entity.*;
+import com.tanguri.shopping.domain.enums.Status;
+import com.tanguri.shopping.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -26,6 +25,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     public Long uploadProduct(AddProductDto addProductDto,Long id) throws IOException {
         User user = userRepository.findById(id).orElse(null);
         Product product = AddProductDto.ProductDtoToProduct(addProductDto,user);
@@ -81,9 +82,22 @@ public class ProductService {
 //        }
         return pagingProductDtos;
     }
-
     public ViewProductDto getProduct(Long id) {
         Product product = productRepository.findById(id).orElse(null);
         return new ViewProductDto(product);
+    }
+    public Long orderProduct(Long productId, Long userId, BuyOrCartProductDto buyOrCartProductDto){
+        Product product = productRepository.findById(productId).orElse(null);
+        User user = userRepository.findById(userId).orElse(null);
+        Order order = Order.builder()
+                .productId(productId)
+                .productCount(buyOrCartProductDto.getCount())
+                .productPrice(product.getPrice())
+                .user(user)
+                .status(Status.배송준비)
+                .orderDate(LocalDateTime.now())
+                .build();
+        orderRepository.save(order);
+        return order.getId();
     }
 }
