@@ -31,12 +31,12 @@
                 <li class="nav-item"><a class="nav-link" href="#" th:href="@{/seller/manage/{id}(id=${user.getId()})}" sec:authorize="hasRole('ROLE_SELLER')">Manage</a></li>
 
             </ul>
-            <form th:action="@{/signin}" sec:authorize="!isAuthenticated()">
+            <form th:action="@{/user/login}" sec:authorize="!isAuthenticated()">
                 <button class="btn btn-outline-dark" type="submit">
                     로그인
                 </button>
             </form>
-            <form th:action="@{/signup}" sec:authorize="!isAuthenticated()">
+            <form th:action="@{/user/signup}" sec:authorize="!isAuthenticated()">
                 <button class="btn btn-outline-dark" type="submit">
                     회원가입
                 </button>
@@ -60,7 +60,7 @@
             </form>
 
             <form class="d-flex" sec:authorize="hasRole('ROLE_SELLER')">
-                <a class="btn btn-outline-dark" href="#" th:text="|현재수익 : ${user.getCoin()} ₩|">
+                <a class="btn btn-outline-dark" href="#" th:text="|현재수익 : ${user.getMoney()} ₩|">
                     현재잔액 : 10000 ₩
                 </a>
                 <a class="btn btn-outline-dark" th:href="@{/seller/{id}(id=${user.getId()})}" th:text="|${user.getName()}님 환영합니다.|">
@@ -88,22 +88,20 @@
                 </div>
                 <p class="lead" th:text="|상세설명: ${product.getDetail()}|">아이템 설명</p>
 
-                <form class="d-flex" sec:authorize="hasRole('ROLE_SELLER')" th:if="${product.getSeller().getId()} == ${user.getId()}">
-                    <div class="d-flex">
-                        <a th:href="@{/product/modify/{id} (id=${product.getId()})}">
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                <div class="d-flex" sec:authorize="hasRole('ROLE_SELLER')" th:if="${product.getUser().getId()} == ${user.getId()}">
+                        <form class="d-flex" th:action="@{/product/modify/{id} (id=${product.getId()})}" method="post">
+                            <button class="btn btn-outline-dark flex-shrink-0" type="submit" >
                                 상품 수정
                             </button>
-                        </a>
-                        <a th:href="@{/product/delete/{id} (id=${product.getId()})}">
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                        </form>
+                        <form class="d-flex" th:action="@{/product/delete/{id} (id=${product.getId()})}" method="post">
+                            <button class="btn btn-outline-dark flex-shrink-0" type="submit">
                                 상품 삭제
                             </button>
-                        </a>
-                    </div>
-                </form>
+                        </form>
+                </div>
 
-                <form class="d-flex" sec:authorize="hasRole('ROLE_USER')" onsubmit="return orderitem();" th:action="@{/user/{id}/checkout/{productId}(id=${user.id}, productId=${product.id})}" method="post">
+                <form class="d-flex" sec:authorize="hasRole('ROLE_USER')" onsubmit="return orderitem();" th:action="@{/user/{id}/buy/{productId}(id=${user.id}, productId=${product.id})}" method="post">
                     <div class="d-flex">
                         <input class="form-control text-center me-3" id="count" name="count" type="num" value="1"
                                style="max-width: 3rem"/>
@@ -119,30 +117,19 @@
                     <input class="form-control text-center me-3" id="amount" name="amount" type="num" value="1" style="max-width: 3rem"/>
                     <button class="btn btn-outline-dark flex-shrink-0" id="basket" type="submit"><i class="bi-cart-fill me-1"></i>장바구니</button>
                 </form>
-                <!--<form class="d-flex" sec:authorize="hasRole('ROLE_USER')" th:action="@{/user/cart/{id}/{itemId}(id=${user.id}, itemId=${item.id})}" method="post">
-                    <div class="d-flex">
-                    <input class="form-control text-center me-3" id="amount" name="amount" type="num" value="1"
-                               style="max-width: 3rem"/>
-                        <button class="btn btn-outline-dark flex-shrink-0" type="submit">
-                            <i class="bi-cart-fill me-1"></i>
-                            장바구니
-                        </button>
-                    </div>
-                </form>-->
 
-                <form class="d-flex" sec:authorize="!isAuthenticated()">
                     <div class="d-flex">
-                        <a th:href="@{/signin}">
-                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                        <form class="d-flex" sec:authorize="!isAuthenticated()" th:action="@{/user/buy/{productId}(productId=${product.id})}" method="post">
+                            <button class="btn btn-outline-dark flex-shrink-0" type="submit" >
                                 구매하기
                             </button>
-                        </a>
-                        <a class="btn btn-outline-dark" th:href="@{/signin}">
-                            <i class="bi-cart-fill me-1"></i>
-                            장바구니
-                        </a>
+                        </form>
+                        <form class="d-flex" sec:authorize="!isAuthenticated()" th:action="@{/user/cart/{productId}(productId=${product.id})}" method="post">
+                            <button class="btn btn-outline-dark" type="submit">
+                                <i class="bi-cart-fill me-1">장바구니</i>
+                            </button>
+                        </form>
                     </div>
-                </form>
             </div>
         </div>
     </div>

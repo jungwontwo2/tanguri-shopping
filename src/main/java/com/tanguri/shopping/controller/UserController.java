@@ -9,6 +9,7 @@ import com.tanguri.shopping.domain.entity.User;
 import com.tanguri.shopping.service.LoginService;
 import com.tanguri.shopping.service.ProductService;
 import com.tanguri.shopping.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,8 +64,11 @@ public class UserController {
         userService.saveUser(userSignUpDto);
         return "redirect:/";
     }
+
     @GetMapping("/user/login")
-    public String LoginPage(@ModelAttribute("user") UserLoginDto userLoginDto){
+    public String LoginPage(@ModelAttribute("user") UserLoginDto userLoginDto, Model model, HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        request.getSession().setAttribute("prevPage",referer);
         return "user/userlogin";
     }
 

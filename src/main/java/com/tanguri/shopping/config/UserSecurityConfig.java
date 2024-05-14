@@ -1,5 +1,6 @@
 package com.tanguri.shopping.config;
 
+import com.tanguri.shopping.handler.CustomAuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -41,8 +43,9 @@ public class UserSecurityConfig {
         http.formLogin((auth) -> auth.loginPage("/user/login")//로그인 페이지
                 .loginProcessingUrl("/user/login")//포스트 보내면 어디로 가는지
                 .usernameParameter("username")
+                .successHandler(new CustomAuthenticationSuccessHandler())
                 .failureHandler(CustomAuthFailureHandler)
-                .defaultSuccessUrl("/",false)
+                //.defaultSuccessUrl("/",false)
                 .permitAll());
 
 

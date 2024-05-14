@@ -42,7 +42,10 @@ public class ProductController {
     }
 
     @GetMapping("product/{id}")
-    public String viewProduct(@PathVariable("id") Long id,Model model){
+    public String viewProduct(@PathVariable("id") Long id,Model model,@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        if(customUserDetails!=null){
+            model.addAttribute("user", customUserDetails.getUserEntity());
+        }
         ViewProductDto product = productService.getProduct(id);
         model.addAttribute("product",product);
         return "product/ProductView";
