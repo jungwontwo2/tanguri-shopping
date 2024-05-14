@@ -32,4 +32,8 @@ public class UserService {
     public User getUserByLoginId(String loginId) {
         return userRepository.findByLoginId(loginId).orElse(null);
     }
+
+    public Cart getCartByLoginId(Long id){
+        return cartRepository.findById(id).orElse(null);
+    }
 }

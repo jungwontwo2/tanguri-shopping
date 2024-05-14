@@ -5,6 +5,7 @@ import com.tanguri.shopping.domain.dto.product.PagingProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.dto.user.UserLoginDto;
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
+import com.tanguri.shopping.domain.entity.Cart;
 import com.tanguri.shopping.domain.entity.CartItem;
 import com.tanguri.shopping.domain.entity.User;
 import com.tanguri.shopping.service.LoginService;
@@ -112,8 +113,14 @@ public class UserController {
     @GetMapping("user/cart/{id}")
     public String cartPage(@PathVariable("id")Long id,Model model,@AuthenticationPrincipal CustomUserDetails customUserDetails){
         User user = customUserDetails.getUserEntity();
-        List<CartItem> cartItems = user.getCart().getCartItems();
-        model.addAttribute("user");
+        Cart cart = userService.getCartByLoginId(id);
+        List<CartItem> cartItems = cart.getCartItems();
+        int totalPrice=0;
+        for (CartItem cartItem : cartItems) {
+            totalPrice += cartItem.getCount() * cartItem.getProduct().getPrice();
+        }
+        model.addAttribute("totalPrice",totalPrice);
+        model.addAttribute("user",user);
         model.addAttribute("cartItems",cartItems);
         return "user/userCart";
     }

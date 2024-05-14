@@ -42,7 +42,7 @@
                 </button>
             </form>
 
-            <form class="d-flex" sec:authorize="hasRole('ROLE_USER')">
+            <form class="d-flex" sec:authorize="hasRole('ROLE_BUYER')">
                 <a class="btn btn-outline-dark" href="#" th:text="|현재잔액 : ${user.getMoney()} ₩|">
                     현재잔액 : 10000 ₩
                 </a>
@@ -101,7 +101,7 @@
                         </form>
                 </div>
 
-                <form class="d-flex" sec:authorize="hasRole('ROLE_USER')" onsubmit="return orderitem();" th:action="@{/user/{id}/buy/{productId}(id=${user.id}, productId=${product.id})}" method="post">
+                <form class="d-flex" sec:authorize="hasRole('ROLE_BUYER')" onsubmit="return orderitem();" th:action="@{/user/{id}/buy/{productId}(id=${user.id}, productId=${product.id})}" method="post">
                     <div class="d-flex">
                         <input class="form-control text-center me-3" id="count" name="count" type="num" value="1"
                                style="max-width: 3rem"/>
@@ -113,7 +113,7 @@
 
 
 
-                <form class="d-flex" sec:authorize="hasRole('ROLE_USER')" onsubmit="return additem();" th:action="@{/user/cart/{id}/{productId}(id=${user.id}, productId=${product.id})}" method="post">
+                <form class="d-flex" sec:authorize="hasRole('ROLE_BUYER')" onsubmit="return additem();" th:action="@{/user/cart/{id}/{productId}(id=${user.id}, productId=${product.id})}" method="post">
                     <input class="form-control text-center me-3" id="amount" name="amount" type="num" value="1" style="max-width: 3rem"/>
                     <button class="btn btn-outline-dark flex-shrink-0" id="basket" type="submit"><i class="bi-cart-fill me-1"></i>장바구니</button>
                 </form>

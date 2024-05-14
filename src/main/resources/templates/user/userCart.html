@@ -40,7 +40,7 @@
                 <li class="nav-item"><a class="nav-link active" aria-current="page" th:href="@{/}">Home</a></li>
             </ul>
             <form class="d-flex">
-                <a class="btn btn-outline-dark" th:href="@{/user/cash/{id}(id=${user.getId()})}" th:text="|현재잔액 : ${user.getCoin()} ₩|">
+                <a class="btn btn-outline-dark" th:href="@{/user/cash/{id}(id=${user.getId()})}" th:text="|현재잔액 : ${user.getMoney()} ₩|">
                     현재잔액 : 10000 ₩
                 </a>
                 <a class="btn btn-outline-dark" th:href="@{/user/cart/{id}(id=${user.getId()})}">
@@ -153,7 +153,7 @@
                         <script th:inline="javascript">
                             /* <![CDATA[ */
                             function orderitem() {
-                                var userMoney = [[${user.Coin}]];
+                                var userMoney = [[${user.Money}]];
                                 var totalPrice = [[${totalPrice}]];
 
                                 if (userMoney < totalPrice) {
