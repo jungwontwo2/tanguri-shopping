@@ -38,7 +38,7 @@ public class User {
     private Integer earning;
     private LocalDateTime createDate;
 
-    public User(String username,String password,String email,String name,
+    public User(Cart cart,String username,String password,String email,String name,
                 String addressNumber,String address,String detailAddress,boolean isSeller,String phone){
         this.username=username;
         this.password=password;
@@ -51,6 +51,7 @@ public class User {
         money=0;
         earning=0;
         createDate=LocalDateTime.now();
+        this.cart=cart;
         this.role=isSeller? "ROLE_SELLER":"ROLE_BUYER";
     }
 }

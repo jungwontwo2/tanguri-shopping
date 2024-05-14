@@ -5,6 +5,7 @@ import com.tanguri.shopping.domain.dto.product.PagingProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.dto.user.UserLoginDto;
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
+import com.tanguri.shopping.domain.entity.CartItem;
 import com.tanguri.shopping.domain.entity.User;
 import com.tanguri.shopping.service.LoginService;
 import com.tanguri.shopping.service.ProductService;
@@ -21,6 +22,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -104,5 +107,14 @@ public class UserController {
     @PostMapping("/logout")
     public String logout(){
         return "redirect:/";
+    }
+
+    @GetMapping("user/cart/{id}")
+    public String cartPage(@PathVariable("id")Long id,Model model,@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        User user = customUserDetails.getUserEntity();
+        List<CartItem> cartItems = user.getCart().getCartItems();
+        model.addAttribute("user");
+        model.addAttribute("cartItems",cartItems);
+        return "user/userCart";
     }
 }

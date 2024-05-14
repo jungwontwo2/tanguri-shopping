@@ -1,5 +1,6 @@
 package com.tanguri.shopping.domain.dto.user;
 
+import com.tanguri.shopping.domain.entity.Cart;
 import com.tanguri.shopping.domain.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -54,9 +55,9 @@ public class UserSignUpDto {
     private Boolean isSeller;
 
 
-    public static User SingUpDtoToEntity(String username,String password,String email,String name,
-                                         String addressNumber,String address, String detailAddress,
-                                         boolean isSeller,String phone){
-        return new User(username,password,email, name, addressNumber,address, detailAddress,isSeller, phone);
+    public static User SingUpDtoToEntity(Cart cart,String username, String password, String email, String name,
+                                         String addressNumber, String address, String detailAddress,
+                                         boolean isSeller, String phone){
+        return new User(cart,username,password,email, name, addressNumber,address, detailAddress,isSeller, phone);
     }
 }

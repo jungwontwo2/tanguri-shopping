@@ -24,31 +24,11 @@ public class DataInit {
                 "asdfasdf", "Tanguri@naver.com", "구링", "36435",
                 "도안동로23", "372동 1923호", "01000000000", true);
         userService.saveUser(userSignUpDto);
-//        Optional<User> optionalUser = userRepository.findByLoginId("asdf");
-//        User user = optionalUser.get();
+        UserSignUpDto userSignUpDto2 = new UserSignUpDto("qwer", "qwerqwer",
+                "qwerqwer", "Tanguri2@naver.com", "구링2", "36235",
+                "도안동로13", "372동 1923호", "01000000000", false);
+        userService.saveUser(userSignUpDto2);
         System.out.println("Init User Complete");
-//        for (int i = 0; i < 20; i++) {
-//            Content content = Content.builder()
-//                    .title(Integer.toString(i+1))
-//                    .texts(Integer.toString(i+1))
-//                    .user(user)
-//                    .password(user.getPassword())
-//                    .build();
-//            contentRepository.save(content);
-//        }
-//        System.out.println("Init content Complete");
     }
-
-    //댓글 개수 초기화 작업
-    //@PostConstruct
-//    @Transactional
-//    public void setCommentCnt(){
-//        List<Content> contents = contentRepository.findAll();
-//        for (Content content : contents) {
-//            int commentCnt = content.getComments().size();
-//            content.setCommentCnt(commentCnt);
-//            contentRepository.save(content);
-//        }
-//    }
 
 }
