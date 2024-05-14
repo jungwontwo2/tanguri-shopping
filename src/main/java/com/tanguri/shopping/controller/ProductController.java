@@ -6,6 +6,8 @@ import com.tanguri.shopping.domain.dto.product.ViewProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.entity.User;
 import com.tanguri.shopping.service.ProductService;
+import com.tanguri.shopping.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -24,18 +26,20 @@ import java.io.IOException;
 public class ProductController {
 
     private final ProductService productService;
+    private final UserService userService;
     @GetMapping("product/upload")
     public String productUploadForm(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                     Model model, @ModelAttribute("product")AddProductDto addProductDto){
-        User user = customUserDetails.getUserEntity();
-        model.addAttribute("user",user);
+        Long id = customUserDetails.getUserEntity().getId();
+        model.addAttribute("user", userService.findUser(id));
         return "user/seller/addProduct";
     }
     @PostMapping("product/upload")
     public String productUpload(@Validated @ModelAttribute("product") AddProductDto addProductDto, BindingResult bindingResult,
                                 @AuthenticationPrincipal CustomUserDetails customUserDetails,Model model) throws IOException {
         if(bindingResult.hasErrors()){
-            model.addAttribute("user",customUserDetails.getUserEntity());
+            Long id = customUserDetails.getUserEntity().getId();
+            model.addAttribute("user", userService.findUser(id));
             return "user/seller/addProduct";
         }
         productService.uploadProduct(addProductDto,customUserDetails.getId());
@@ -47,7 +51,8 @@ public class ProductController {
                               @AuthenticationPrincipal CustomUserDetails customUserDetails,
                               @ModelAttribute("buyOrCartProductDto")BuyOrCartProductDto buyOrCartProductDto){
         if(customUserDetails!=null){
-            model.addAttribute("user", customUserDetails.getUserEntity());
+            Long userId = customUserDetails.getUserEntity().getId();
+            model.addAttribute("user", userService.findUser(userId));
         }
         ViewProductDto product = productService.getProduct(id);
         model.addAttribute("product",product);
@@ -56,10 +61,27 @@ public class ProductController {
     @PostMapping("product/order/{productId}")
     public String buyProduct(@PathVariable("productId")Long productId,
                              @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                             @ModelAttribute("product") BuyOrCartProductDto buyOrCartProductDto){
-        productService.orderProduct(productId,customUserDetails.getId(),buyOrCartProductDto);
-        System.out.println("buyOrCartProductDto = " + buyOrCartProductDto.getCount());
-        return "redirect:/product/"+productId;
+                             @ModelAttribute("product") BuyOrCartProductDto buyOrCartProductDto,
+                             HttpServletRequest request){
+        Long id = customUserDetails.getUserEntity().getId();
+        Integer money = userService.getMoney(id);
+        if(productService.getProduct(productId).getPrice()*buyOrCartProductDto.getCount()>money){
+            request.setAttribute("msg","잔액이 부족합니다.\n 충전 후 다시 사용바랍니다.");
+            String redirectUrl="/product/"+productId;
+            request.setAttribute("redirectUrl", redirectUrl);
+            return "common/messageRedirect";
+        }
+        else if(productService.getProduct(productId).getStock()<buyOrCartProductDto.getCount()){
+            request.setAttribute("msg","재고가 부족합니다.\n최대 수량은"+productService.getProduct(productId).getStock()+"개 입니다");
+            String redirectUrl="/product/"+productId;
+            request.setAttribute("redirectUrl", redirectUrl);
+            return "common/messageRedirect";
+        }
+        else {
+            productService.orderProduct(productId,customUserDetails.getId(),buyOrCartProductDto);
+            System.out.println("buyOrCartProductDto = " + buyOrCartProductDto.getCount());
+            return "redirect:/product/"+productId;
+        }
     }
 
 }

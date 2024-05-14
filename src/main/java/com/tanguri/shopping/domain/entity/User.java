@@ -58,4 +58,7 @@ public class User {
     public void addMoney(int amount) {
         money+=amount;
     }
+    public void useMoney(Integer useMoney){
+        money-=useMoney;
+    }
 }

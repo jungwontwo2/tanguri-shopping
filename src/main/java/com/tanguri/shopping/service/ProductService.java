@@ -88,7 +88,9 @@ public class ProductService {
     }
     public Long orderProduct(Long productId, Long userId, BuyOrCartProductDto buyOrCartProductDto){
         Product product = productRepository.findById(productId).orElse(null);
+        product.decreaseStock(buyOrCartProductDto.getCount());
         User user = userRepository.findById(userId).orElse(null);
+        user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
         Order order = Order.builder()
                 .productId(productId)
                 .productCount(buyOrCartProductDto.getCount())

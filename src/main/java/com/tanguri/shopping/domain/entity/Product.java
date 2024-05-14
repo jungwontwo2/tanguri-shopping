@@ -37,4 +37,7 @@ public class Product {
     private String detail;
     private Integer price;
     private String name;
+    public void decreaseStock(Integer count){
+        stock-=count;
+    }
 }
