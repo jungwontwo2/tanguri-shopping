@@ -46,7 +46,7 @@
                 </button>
             </div>
             <form class="d-flex" sec:authorize="hasRole('ROLE_BUYER')">
-                <a class="btn btn-outline-dark" th:href="@{/user/cash/{id}(id=${user.getId()})}" th:text="|현재잔액 : ${user.getMoney()} ₩|">
+                <a class="btn btn-outline-dark" th:href="@{/user/money/{id}(id=${user.getId()})}" th:text="|현재잔액 : ${user.getMoney()} ₩|">
                     현재잔액 : 10000 ₩
                 </a>
                 <div class="dropdown">
@@ -57,7 +57,7 @@
                         <lt><a class="dropdown-item" th:href="@{/user/{id}(id=${user.getId()})}">마이페이지</a></lt>
                         <lt><a class="dropdown-item" th:href="@{/user/cart/{id}(id=${user.getId()})}">장바구니</a></lt>
                         <lt><a class="dropdown-item" th:href="@{/user/orderHist/{id}(id=${user.getId()})}">주문내역</a></lt>
-                        <lt><a class="dropdown-item" th:href="@{/user/cash/{id}(id=${user.getId()})}">충전하기</a></lt>
+                        <lt><a class="dropdown-item" th:href="@{/user/money/{id}(id=${user.getId()})}">충전하기</a></lt>
                     </ul>
                 </div>
             </form>

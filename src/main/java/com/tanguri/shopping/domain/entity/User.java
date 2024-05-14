@@ -54,4 +54,8 @@ public class User {
         this.cart=cart;
         this.role=isSeller? "ROLE_SELLER":"ROLE_BUYER";
     }
+
+    public void addMoney(int amount) {
+        money+=amount;
+    }
 }

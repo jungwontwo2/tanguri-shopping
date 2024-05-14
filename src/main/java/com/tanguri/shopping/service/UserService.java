@@ -38,4 +38,14 @@ public class UserService {
     public Cart getCartByLoginId(Long id){
         return cartRepository.findById(id).orElse(null);
     }
+
+    public void chargeMoney(Long id, int amount) {
+        User user = userRepository.findById(id).orElse(null);
+        user.addMoney(amount);
+        userRepository.save(user);
+    }
+
+    public User findUser(Long id) {
+        return userRepository.findById(id).get();
+    }
 }
