@@ -30,8 +30,8 @@ public class Product {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "product",fetch = FetchType.LAZY)
-    private CartItem cartItem;
+    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
+    private List<CartItem> cartItems;
 
     private Integer stock;
     private String detail;

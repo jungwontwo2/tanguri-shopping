@@ -83,5 +83,28 @@ public class ProductController {
             return "redirect:/product/"+productId;
         }
     }
-
+    @PostMapping("product/cart/{productId}")
+    public String ProductInCart(@PathVariable("productId")Long productId,
+                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                @ModelAttribute("product") BuyOrCartProductDto buyOrCartProductDto,
+                                HttpServletRequest request){
+        Long id = customUserDetails.getUserEntity().getId();
+        Integer money = userService.getMoney(id);
+        if(productService.getProduct(productId).getPrice()*buyOrCartProductDto.getCount()>money){
+            request.setAttribute("msg","잔액이 부족합니다.\n 충전 후 다시 사용바랍니다.");
+            String redirectUrl="/product/"+productId;
+            request.setAttribute("redirectUrl", redirectUrl);
+            return "common/messageRedirect";
+        }
+        else if(productService.getProduct(productId).getStock()<buyOrCartProductDto.getCount()){
+            request.setAttribute("msg","재고가 부족합니다.\n최대 수량은"+productService.getProduct(productId).getStock()+"개 입니다");
+            String redirectUrl="/product/"+productId;
+            request.setAttribute("redirectUrl", redirectUrl);
+            return "common/messageRedirect";
+        }
+        else {
+            productService.productInCart(productId,customUserDetails.getId(),buyOrCartProductDto);
+            return "redirect:/product/"+productId;
+        }
+    }
 }

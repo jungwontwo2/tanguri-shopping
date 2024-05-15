@@ -19,7 +19,7 @@ public class DataInit {
 
     //테스트용 데이터 추가
     //@PostConstruct
-    //@PostConstruct
+    @PostConstruct
     public void dataInit(){
         UserSignUpDto userSignUpDto = new UserSignUpDto("asdf", "asdfasdf",
                 "asdfasdf", "Tanguri@naver.com", "구링", "36435",

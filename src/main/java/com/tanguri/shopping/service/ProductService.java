@@ -26,7 +26,7 @@ public class ProductService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
+    private final CartItemRepository cartItemRepository;
     public Long uploadProduct(AddProductDto addProductDto,Long id) throws IOException {
         User user = userRepository.findById(id).orElse(null);
         Product product = AddProductDto.ProductDtoToProduct(addProductDto,user);
@@ -101,5 +101,18 @@ public class ProductService {
                 .build();
         orderRepository.save(order);
         return order.getId();
+    }
+    public Long productInCart(Long productId,Long userId,BuyOrCartProductDto buyOrCartProductDto){
+        Product product = productRepository.findById(productId).orElse(null);
+        product.decreaseStock(buyOrCartProductDto.getCount());
+        User user = userRepository.findById(userId).orElse(null);
+        user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
+        CartItem cartItem = CartItem.builder()
+                .cart(user.getCart())
+                .count(buyOrCartProductDto.getCount())
+                .product(product)
+                .build();
+        cartItemRepository.save(cartItem);
+        return cartItem.getId();
     }
 }

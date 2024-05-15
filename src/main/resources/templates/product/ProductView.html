@@ -110,8 +110,8 @@
                         </button>
                     </div>
                 </form>
-                <form class="d-flex" sec:authorize="hasRole('ROLE_BUYER')" th:object="${buyOrCartProductDto}" onsubmit="return additem();" th:action="@{/product/cart/{id}/{productId}(productId=${product.id})}" method="post">
-                    <input class="form-control text-center me-3" id="amount" th:field="*{count}" name="amount" type="num" value="1" style="max-width: 3rem"/>
+                <form class="d-flex" sec:authorize="hasRole('ROLE_BUYER')" th:object="${buyOrCartProductDto}" onsubmit="return additem();" th:action="@{/product/cart/{productId}(productId=${product.id})}" method="post">
+                    <input class="form-control text-center me-3" id="count" th:field="*{count}" name="count" type="num" value="1" style="max-width: 3rem"/>
                     <button class="btn btn-outline-dark flex-shrink-0" id="basket" type="submit"><i class="bi-cart-fill me-1"></i>장바구니</button>
                 </form>
 
