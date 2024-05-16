@@ -48,4 +48,8 @@ public class Order {
     public void completeDelivery() {
         this.status=Status.배송완료;
     }
+
+    public void cancelOrder() {
+        this.status=Status.주문취소;
+    }
 }

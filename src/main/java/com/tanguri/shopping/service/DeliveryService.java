@@ -36,4 +36,17 @@ public class DeliveryService {
         user.addEarning(orderRepository.findById(orderId).get().getTotalPrice());
         userRepository.save(user);
     }
+
+    public void cancelDelivery(Long orderId) {
+        Delivery delivery = deliveryRepository.findByOrderItemId(orderId);
+        delivery.cancelDelivery();
+        deliveryRepository.save(delivery);
+        Order order = orderRepository.findById(orderId).orElse(null);
+        order.cancelOrder();
+        orderRepository.save(order);
+        Long userId = order.getUser().getId();
+        User user = userRepository.findByUserId(userId).orElse(null);
+        user.addMoney(order.getTotalPrice());
+        userRepository.save(user);
+    }
 }

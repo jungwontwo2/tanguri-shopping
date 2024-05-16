@@ -35,4 +35,8 @@ public class Delivery {
     public void completeDelivery() {
         this.status=Status.배송완료;
     }
+
+    public void cancelDelivery() {
+        this.status=Status.주문취소;
+    }
 }
