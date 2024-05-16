@@ -92,25 +92,41 @@
                     <thead>
                     <tr>
                         <th scope="col">번호</th>
-<!--                        <th scope="col">상품ID</th>-->
                         <th scope="col">상품명</th>
                         <th scope="col">판매량</th>
                         <th scope="col">가격</th>
                         <th scope="col">판매수익</th>
                         <th scope="col">판매날짜</th>
                         <th scope="col">판매현황</th>
+                        <th scope="col">배송시작</th>
+                        <th scope="col">배송완료</th>
+                        <th scope="col">판매취소</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="order, i: ${orders}" >
                         <td th:text="${i.count}">1</td>
-<!--                        <td th:text="${order.getItemId()}">3번상품</td>-->
                         <td th:text="${order.product.getName()}">상품명</td>
                         <td th:text="${order.productCount}">판매량</td>
                         <td th:text="|${order.product.price} 원|">가격</td>
                         <td th:text="${order.getTotalPrice()}">판매수익</td>
                         <td th:text="${order.getOrderDate()}">판매날짜</td>
                         <td th:text="${order.status}">판매현황</td>
+                        <td>
+                            <form th:action="@{/seller/delivery/start/{orderItemId}(orderItemId=${order.id})}" th:method="POST">
+                                <button type="submit">배송시작</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/seller/delivery/complete/{orderItemId}(orderItemId=${order.id})}" th:method="POST">
+                                <button type="submit">배송완료</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/seller/sell/cancel/{orderItemId}(id=${user.id}, orderItemId=${order.id})}" th:method="POST">
+                                <button type="submit">판매취소</button>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

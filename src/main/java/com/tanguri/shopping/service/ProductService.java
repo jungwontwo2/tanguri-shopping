@@ -86,26 +86,7 @@ public class ProductService {
         Product product = productRepository.findById(id).orElse(null);
         return new ViewProductDto(product);
     }
-    public Long orderProduct(Long productId, Long userId, BuyOrCartProductDto buyOrCartProductDto){
-        Product product = productRepository.findById(productId).orElse(null);
-        product.decreaseStock(buyOrCartProductDto.getCount());
-        User user = userRepository.findById(userId).orElse(null);
-        user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
-        Order order = Order.builder()
-                //.productId(productId)
-                //.productCount(buyOrCartProductDto.getCount())
-                //.productPrice(product.getPrice())
-                .user(user)
-                .product(product)
-                .productCount(buyOrCartProductDto.getCount())
-                .totalPrice(buyOrCartProductDto.getCount()*product.getPrice())
-                .status(Status.배송준비)
-                .orderDate(LocalDateTime.now())
-                .build();
-        user.getOrders().add(order);
-        orderRepository.save(order);
-        return order.getId();
-    }
+
     public Long productInCart(Long productId,Long userId,BuyOrCartProductDto buyOrCartProductDto){
         Product product = productRepository.findById(productId).orElse(null);
         //product.decreaseStock(buyOrCartProductDto.getCount());

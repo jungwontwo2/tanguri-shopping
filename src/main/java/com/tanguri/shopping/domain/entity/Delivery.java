@@ -2,10 +2,16 @@ package com.tanguri.shopping.domain.entity;
 
 import com.tanguri.shopping.domain.enums.Status;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +25,7 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private String city;
-    private String street;
-    private String zipcode;
+    private String addressNumber;
+    private String address;
+    private String detailAddress;
 }

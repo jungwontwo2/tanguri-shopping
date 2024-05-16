@@ -5,6 +5,7 @@ import com.tanguri.shopping.domain.dto.product.BuyOrCartProductDto;
 import com.tanguri.shopping.domain.dto.product.ViewProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.entity.User;
+import com.tanguri.shopping.service.OrderService;
 import com.tanguri.shopping.service.ProductService;
 import com.tanguri.shopping.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserService userService;
+    private final OrderService orderService;
     @GetMapping("product/upload")
     public String productUploadForm(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                     Model model, @ModelAttribute("product")AddProductDto addProductDto){
@@ -78,7 +80,7 @@ public class ProductController {
             return "common/messageRedirect";
         }
         else {
-            productService.orderProduct(productId,customUserDetails.getId(),buyOrCartProductDto);
+            orderService.orderProduct(productId,customUserDetails.getId(),buyOrCartProductDto);
             System.out.println("buyOrCartProductDto = " + buyOrCartProductDto.getCount());
             return "redirect:/product/"+productId;
         }
