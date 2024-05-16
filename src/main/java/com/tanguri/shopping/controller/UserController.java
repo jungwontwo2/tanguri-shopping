@@ -9,6 +9,7 @@ import com.tanguri.shopping.domain.entity.Cart;
 import com.tanguri.shopping.domain.entity.CartItem;
 import com.tanguri.shopping.domain.entity.Order;
 import com.tanguri.shopping.domain.entity.User;
+import com.tanguri.shopping.domain.enums.Status;
 import com.tanguri.shopping.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -171,9 +172,16 @@ public class UserController {
         Integer totalSellCount = 0;
         Integer totalSellEarning = 0;
         for (Order order : orders) {
-            totalSellCount+=order.getProductCount();
-            totalSellEarning+=order.getTotalPrice();
-//            System.out.println("order.getStatus() = " + order.getStatus());
+            if(order.getStatus().equals(Status.배송준비))
+            {
+                totalSellCount+=order.getProductCount();
+                totalSellEarning+=order.getTotalPrice();
+            }
+            else if(order.getStatus().equals(Status.배송중)){
+                totalSellCount+=order.getProductCount();
+                totalSellEarning+=order.getTotalPrice();
+            }
+            System.out.println("order.getStatus() = " + order.getStatus());
         }
         model.addAttribute("user",user);
         model.addAttribute("orders",orders);

@@ -61,4 +61,8 @@ public class User {
     public void useMoney(Integer useMoney){
         money-=useMoney;
     }
+
+    public void addEarning(Integer totalPrice) {
+        this.earning+=totalPrice;
+    }
 }

@@ -31,4 +31,8 @@ public class Delivery {
     public void startDelivery(){
         this.status= Status.배송중;
     }
+
+    public void completeDelivery() {
+        this.status=Status.배송완료;
+    }
 }

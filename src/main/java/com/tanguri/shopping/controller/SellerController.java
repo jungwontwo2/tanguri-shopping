@@ -21,8 +21,16 @@ public class SellerController {
     @PostMapping("/seller/delivery/start/{orderId}")
     public String startDelivery(@PathVariable("orderId") Long orderId,
                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Long id = customUserDetails.getUserEntity().getId();
+        Long userId = customUserDetails.getUserEntity().getId();
         deliveryService.startDelivery(orderId);
-        return "redirect:/seller/sellHist/"+id;
+        return "redirect:/seller/sellHist/"+userId;
+    }
+
+    @PostMapping("/seller/delivery/complete/{orderId}")
+    public String completeDelivery(@PathVariable("orderId") Long orderId,
+                                   @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long userId = customUserDetails.getId();
+        deliveryService.completeDelivery(orderId,userId);
+        return "redirect:/seller/sellHist/"+userId;
     }
 }
