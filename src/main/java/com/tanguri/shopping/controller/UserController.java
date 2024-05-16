@@ -173,6 +173,7 @@ public class UserController {
         for (Order order : orders) {
             totalSellCount+=order.getProductCount();
             totalSellEarning+=order.getTotalPrice();
+//            System.out.println("order.getStatus() = " + order.getStatus());
         }
         model.addAttribute("user",user);
         model.addAttribute("orders",orders);

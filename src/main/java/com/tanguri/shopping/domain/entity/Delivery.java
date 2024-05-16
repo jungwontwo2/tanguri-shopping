@@ -28,4 +28,7 @@ public class Delivery {
     private String addressNumber;
     private String address;
     private String detailAddress;
+    public void startDelivery(){
+        this.status= Status.배송중;
+    }
 }

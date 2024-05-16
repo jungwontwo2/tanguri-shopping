@@ -113,17 +113,17 @@
                         <td th:text="${order.getOrderDate()}">판매날짜</td>
                         <td th:text="${order.status}">판매현황</td>
                         <td>
-                            <form th:action="@{/seller/delivery/start/{orderItemId}(orderItemId=${order.id})}" th:method="POST">
+                            <form th:action="@{/seller/delivery/start/{orderId}(orderId=${order.id})}" th:method="POST">
                                 <button type="submit">배송시작</button>
                             </form>
                         </td>
                         <td>
-                            <form th:action="@{/seller/delivery/complete/{orderItemId}(orderItemId=${order.id})}" th:method="POST">
+                            <form th:action="@{/seller/delivery/complete/{orderId}(orderId=${order.id})}" th:method="POST">
                                 <button type="submit">배송완료</button>
                             </form>
                         </td>
                         <td>
-                            <form th:action="@{/seller/sell/cancel/{orderItemId}(id=${user.id}, orderItemId=${order.id})}" th:method="POST">
+                            <form th:action="@{/seller/sell/cancel/{orderId}(orderId=${order.id})}" th:method="POST">
                                 <button type="submit">판매취소</button>
                             </form>
                         </td>
