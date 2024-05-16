@@ -112,14 +112,17 @@ public class UserController {
 
     @GetMapping("user/cart/{id}")
     public String cartPage(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        User user = customUserDetails.getUserEntity();
+        User user = userService.findUser(customUserDetails.getId());
         Cart cart = userService.getCartByLoginId(id);
         List<CartItem> cartItems = cart.getCartItems();
         int totalPrice = 0;
+        int totalProductCount=0;
         for (CartItem cartItem : cartItems) {
             totalPrice += cartItem.getCount() * cartItem.getProduct().getPrice();
+            totalProductCount+=cartItem.getCount();
         }
         model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("totalProductCount",totalProductCount);
         model.addAttribute("user", user);
         model.addAttribute("cartItems", cartItems);
         return "user/userCart";

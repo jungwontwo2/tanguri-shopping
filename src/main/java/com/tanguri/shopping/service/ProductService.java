@@ -104,9 +104,9 @@ public class ProductService {
     }
     public Long productInCart(Long productId,Long userId,BuyOrCartProductDto buyOrCartProductDto){
         Product product = productRepository.findById(productId).orElse(null);
-        product.decreaseStock(buyOrCartProductDto.getCount());
+        //product.decreaseStock(buyOrCartProductDto.getCount());
         User user = userRepository.findById(userId).orElse(null);
-        user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
+        //user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
         CartItem cartItem = CartItem.builder()
                 .cart(user.getCart())
                 .count(buyOrCartProductDto.getCount())

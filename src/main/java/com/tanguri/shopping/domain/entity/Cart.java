@@ -21,13 +21,8 @@ public class Cart {
     @OneToMany(mappedBy = "cart",fetch = FetchType.LAZY)
     private List<CartItem> cartItems = new ArrayList<>();
 
-    private Integer count;
-
     public void setUser(User user) {
         this.user = user;
     }
 
-    public Cart(){
-        count=0;
-    }
 }

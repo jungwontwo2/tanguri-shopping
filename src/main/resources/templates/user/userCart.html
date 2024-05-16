@@ -46,7 +46,7 @@
                 <a class="btn btn-outline-dark" th:href="@{/user/cart/{id}(id=${user.getId()})}">
                     <i class="bi-cart-fill me-1"></i>
                     Cart
-                    <span class="badge bg-dark text-white ms-1 rounded-pill" th:text="${user.getCart().getCount()}">0</span>
+                    <span class="badge bg-dark text-white ms-1 rounded-pill" th:text="${totalProductCount}">0</span>
                 </a>
                 <a class="btn btn-outline-dark" th:href="@{/user/{id}(id=${user.getId()})}" th:text="|${user.getName()}님 환영합니다.|">
                     마이페이지
@@ -107,7 +107,6 @@
                         <th scope="col">상품명</th>
                         <th scope="col">수량</th>
                         <th scope="col">가격</th>
-                        <th scope="col">담은날짜</th>
                         <th scope="col">삭제</th>
                     </tr>
                     </thead>
@@ -118,7 +117,12 @@
                         <td th:text="${cartItem.getProduct().getName()}">상품명</td>
                         <td th:text="${cartItem.getCount()}">수량</td>
                         <td th:text="${cartItem.getProduct().getPrice() * cartItem.getCount()}">가격</td>
-                        <td class="btn btn-outline-dark"><a th:href="@{/user/cart/{id}/{cartItemId}/delete(id=${cartItem.getCart().getUser().id}, cartItemId=${cartItem.getId()})}" style="text-decoration: none">삭제</a></td>
+                        <td class="btn btn-outline-dark">
+                            <form th:action="@{/user/cart/{cartItemId}/delete(cartItemId=${cartItem.getId()})}" method="post">
+                                <input type="submit" value="삭제" class="btn btn-outline-dark"/>
+                            </form>
+<!--                            <a th:href="@{/user/cart/{id}/{cartItemId}/delete(id=${cartItem.getCart().getUser().id}, cartItemId=${cartItem.getId()})}" style="text-decoration: none">삭제</a>-->
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -131,7 +135,7 @@
                             <h4 class="my-0 fw-normal">총 수량</h4>
                         </div>
                         <form class="card-body" method="post">
-                            <h1 class="card-title pricing-card-title" th:text="|${user.getCart().getCount()} 개|">$0</h1>
+                            <h1 class="card-title pricing-card-title" th:text="|${totalProductCount} 개|">$0</h1>
 
                         </form>
                     </div>
