@@ -131,8 +131,14 @@ public class UserController {
     @GetMapping("user/money/{id}")
     public String moneyPage(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails,
                             Model model) {
-        User user = customUserDetails.getUserEntity();
+        User user = userService.findUser(customUserDetails.getId());
+        List<CartItem> cartItems = user.getCart().getCartItems();
+        int totalProductCount=0;
+        for (CartItem cartItem : cartItems) {
+            totalProductCount+=cartItem.getCount();
+        }
         model.addAttribute("user", user);
+        model.addAttribute("totalProductCount",totalProductCount);
         return "user/money";
     }
 
