@@ -25,12 +25,13 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @OneToOne(mappedBy = "order",fetch = FetchType.LAZY)
     private Delivery delivery;
-
-    private Long productId;
-    private Integer productPrice;
+    private Integer totalPrice;
     private Integer productCount;
     private LocalDateTime orderDate;
 

@@ -18,7 +18,6 @@ public class DataInit {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //테스트용 데이터 추가
-    //@PostConstruct
 //    @PostConstruct
     public void dataInit(){
         UserSignUpDto userSignUpDto = new UserSignUpDto("asdf", "asdfasdf",

@@ -7,10 +7,9 @@ import com.tanguri.shopping.domain.dto.user.UserLoginDto;
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
 import com.tanguri.shopping.domain.entity.Cart;
 import com.tanguri.shopping.domain.entity.CartItem;
+import com.tanguri.shopping.domain.entity.Order;
 import com.tanguri.shopping.domain.entity.User;
-import com.tanguri.shopping.service.LoginService;
-import com.tanguri.shopping.service.ProductService;
-import com.tanguri.shopping.service.UserService;
+import com.tanguri.shopping.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +32,8 @@ public class UserController {
     private final UserService userService;
     private final LoginService loginService;
     private final ProductService productService;
+    private final CartService cartService;
+    private final OrderService orderService;
 
     @GetMapping("/")
     public String mainPage(@PageableDefault(page = 1) Pageable pageable,
@@ -116,16 +117,16 @@ public class UserController {
         Cart cart = userService.getCartByLoginId(id);
         List<CartItem> cartItems = cart.getCartItems();
         int totalPrice = 0;
-        int totalProductCount=0;
+        int totalProductCount = 0;
         for (CartItem cartItem : cartItems) {
             totalPrice += cartItem.getCount() * cartItem.getProduct().getPrice();
-            totalProductCount+=cartItem.getCount();
+            totalProductCount += cartItem.getCount();
         }
         model.addAttribute("totalPrice", totalPrice);
-        model.addAttribute("totalProductCount",totalProductCount);
+        model.addAttribute("totalProductCount", totalProductCount);
         model.addAttribute("user", user);
         model.addAttribute("cartItems", cartItems);
-        return "user/userCart";
+        return "user/buyer/userCart";
     }
 
     @GetMapping("user/money/{id}")
@@ -133,20 +134,32 @@ public class UserController {
                             Model model) {
         User user = userService.findUser(customUserDetails.getId());
         List<CartItem> cartItems = user.getCart().getCartItems();
-        int totalProductCount=0;
+        int totalProductCount = 0;
         for (CartItem cartItem : cartItems) {
-            totalProductCount+=cartItem.getCount();
+            totalProductCount += cartItem.getCount();
         }
         model.addAttribute("user", user);
-        model.addAttribute("totalProductCount",totalProductCount);
+        model.addAttribute("totalProductCount", totalProductCount);
         return "user/money";
     }
 
     // 잔액충전 처리
     @PostMapping("/user/charge/pro")
-    public String chargePro(int amount, @AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public String chargePro(int amount, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User user = customUserDetails.getUserEntity();
-        userService.chargeMoney(user.getId(),amount);
+        userService.chargeMoney(user.getId(), amount);
         return "redirect:/";
+    }
+
+    @GetMapping("/user/orderHist/{id}")
+    public String orderHistory(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                               Model model){
+        User user = userService.findUser(customUserDetails.getId());
+        List<Order> orders = orderService.getOrderItemsByUserId(customUserDetails.getId());
+        Integer totalOrderCount = orderService.getTotalOrderCount(customUserDetails.getId());
+        model.addAttribute("orders",orders);
+        model.addAttribute("totalOrderCount",totalOrderCount);
+        model.addAttribute("user",user);
+        return "user/buyer/userOrderList";
     }
 }

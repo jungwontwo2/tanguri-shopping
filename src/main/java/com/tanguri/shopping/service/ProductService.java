@@ -92,13 +92,17 @@ public class ProductService {
         User user = userRepository.findById(userId).orElse(null);
         user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
         Order order = Order.builder()
-                .productId(productId)
-                .productCount(buyOrCartProductDto.getCount())
-                .productPrice(product.getPrice())
+                //.productId(productId)
+                //.productCount(buyOrCartProductDto.getCount())
+                //.productPrice(product.getPrice())
                 .user(user)
+                .product(product)
+                .productCount(buyOrCartProductDto.getCount())
+                .totalPrice(buyOrCartProductDto.getCount()*product.getPrice())
                 .status(Status.배송준비)
                 .orderDate(LocalDateTime.now())
                 .build();
+        user.getOrders().add(order);
         orderRepository.save(order);
         return order.getId();
     }
