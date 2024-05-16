@@ -24,4 +24,7 @@ public class OrderService {
         }
         return totalOrderCount;
     }
+    public List<Order> getSellerItems(Long id){
+        return orderRepository.findOrderItemByProductId(id);
+    }
 }

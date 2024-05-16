@@ -162,4 +162,23 @@ public class UserController {
         model.addAttribute("user",user);
         return "user/buyer/userOrderList";
     }
+
+    @GetMapping("/seller/sellHist/{id}")
+    public String sellHistory(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                              Model model) {
+        User user = userService.findUser(customUserDetails.getId());
+        List<Order> orders = orderService.getSellerItems(id);
+        Integer totalSellCount = 0;
+        Integer totalSellEarning = 0;
+        for (Order order : orders) {
+            totalSellCount+=order.getProductCount();
+            totalSellEarning+=order.getTotalPrice();
+        }
+        model.addAttribute("user",user);
+        model.addAttribute("orders",orders);
+        model.addAttribute("totalSellCount",totalSellCount);
+        model.addAttribute("totalSellEarning",totalSellEarning);
+
+        return "user/seller/sellHist";
+    }
 }
