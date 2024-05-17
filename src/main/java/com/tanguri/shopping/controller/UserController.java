@@ -180,4 +180,17 @@ public class UserController {
 
         return "user/seller/sellHist";
     }
+    @GetMapping("/user/{id}")
+    public String userInfo(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                           Model model){
+        User user = userService.findUser(customUserDetails.getId());
+        List<CartItem> cartItems = user.getCart().getCartItems();
+        int totalProductCount = 0;
+        for (CartItem cartItem : cartItems) {
+            totalProductCount += cartItem.getCount();
+        }
+        model.addAttribute("totalProductCount",totalProductCount);
+        model.addAttribute("user",user);
+        return "user/userPage";
+    }
 }
