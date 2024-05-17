@@ -4,6 +4,7 @@ import com.tanguri.shopping.domain.dto.ResponseDto;
 import com.tanguri.shopping.domain.dto.product.PagingProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.dto.user.UserLoginDto;
+import com.tanguri.shopping.domain.dto.user.UserModifyDto;
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
 import com.tanguri.shopping.domain.entity.Cart;
 import com.tanguri.shopping.domain.entity.CartItem;
@@ -192,5 +193,20 @@ public class UserController {
         model.addAttribute("totalProductCount",totalProductCount);
         model.addAttribute("user",user);
         return "user/userPage";
+    }
+
+    @GetMapping("/user/modify/{id}")
+    public String modifyUserInfoForm(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                 Model model) {
+        User user = userService.findUser(id);
+        model.addAttribute("user",user);
+        return "user/userModify";
+    }
+    @PostMapping("/user/modify/{id}")
+    public String modifyUserInfo(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                 @ModelAttribute("userModifyDto")UserModifyDto userModifyDto){
+        User user = userService.findUser(id);
+        userService.modifyUserInfo(id,userModifyDto);
+        return "redirect:/user/"+id;
     }
 }

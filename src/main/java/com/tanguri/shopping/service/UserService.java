@@ -1,5 +1,6 @@
 package com.tanguri.shopping.service;
 
+import com.tanguri.shopping.domain.dto.user.UserModifyDto;
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
 import com.tanguri.shopping.domain.entity.*;
 import com.tanguri.shopping.repository.CartRepository;
@@ -51,5 +52,11 @@ public class UserService {
 
     public Integer getMoney(Long id){
         return userRepository.findById(id).get().getMoney();
+    }
+
+    public void modifyUserInfo(Long id, UserModifyDto userModifyDto) {
+        User user = userRepository.findByUserId(id).orElse(null);
+        user.modifyUserInfo(userModifyDto);
+        userRepository.save(user);
     }
 }

@@ -1,5 +1,6 @@
 package com.tanguri.shopping.domain.entity;
 
+import com.tanguri.shopping.domain.dto.user.UserModifyDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,5 +65,13 @@ public class User {
 
     public void addEarning(Integer totalPrice) {
         this.earning+=totalPrice;
+    }
+
+    public void modifyUserInfo(UserModifyDto modifyDto){
+        this.email = modifyDto.getEmail();
+        this.addressNumber = modifyDto.getAddressNumber();
+        this.address = modifyDto.getAddress();
+        this.detailAddress = modifyDto.getDetailAddress();
+        this.phone = modifyDto.getPhone();
     }
 }
