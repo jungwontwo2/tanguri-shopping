@@ -56,7 +56,7 @@
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <lt><a class="dropdown-item" th:href="@{/user/{id}(id=${user.getId()})}">마이페이지</a></lt>
                         <lt><a class="dropdown-item" th:href="@{/user/cart/{id}(id=${user.getId()})}">장바구니</a></lt>
-                        <lt><a class="dropdown-item" th:href="@{/user/orderHist/{id}(id=${user.getId()})}">주문내역</a></lt>
+                        <lt><a class="dropdown-item" th:href="@{/orderHist/{id}(id=${user.getId()})}">주문내역</a></lt>
                         <lt><a class="dropdown-item" th:href="@{/user/money/{id}(id=${user.getId()})}">충전하기</a></lt>
                     </ul>
                 </div>

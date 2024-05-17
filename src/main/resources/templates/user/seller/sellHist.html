@@ -123,7 +123,7 @@
                             </form>
                         </td>
                         <td>
-                            <form th:action="@{/seller/sell/cancel/{orderId}(orderId=${order.id})}" th:method="POST">
+                            <form th:if="${order.status.name()}=='배송준비'"th:action="@{/seller/sell/cancel/{orderId}(orderId=${order.id})}" th:method="POST">
                                 <button type="submit">판매취소</button>
                             </form>
                         </td>

@@ -152,17 +152,7 @@ public class UserController {
         return "redirect:/";
     }
 
-    @GetMapping("/user/orderHist/{id}")
-    public String orderHistory(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                               Model model){
-        User user = userService.findUser(customUserDetails.getId());
-        List<Order> orders = orderService.getOrderItemsByUserId(customUserDetails.getId());
-        Integer totalOrderCount = orderService.getTotalOrderCount(customUserDetails.getId());
-        model.addAttribute("orders",orders);
-        model.addAttribute("totalOrderCount",totalOrderCount);
-        model.addAttribute("user",user);
-        return "user/buyer/userOrderList";
-    }
+
 
     @GetMapping("/seller/sellHist/{id}")
     public String sellHistory(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails,

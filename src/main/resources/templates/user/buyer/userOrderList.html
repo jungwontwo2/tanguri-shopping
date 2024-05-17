@@ -79,7 +79,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/user/orderHist/{id}(id=${user.getId()})}">
+                        <a class="nav-link" th:href="@{/orderHist/{id}(id=${user.getId()})}">
                             <span data-feather="file"></span>
                             주문내역
                         </a>
@@ -118,7 +118,7 @@
                         <td th:text="${order.status.name()}">주문상태</td>
                         <td th:if="${order.status} == '주문취소'">주문취소</a></td>
                         <td th:unless="${order.status.name()} == '배송중' or ${order.status.name()}=='배송완료' or ${order.status.name()}=='주문취소'">
-                            <form onsubmit="return cancel();" th:action="@{/user/{id}/checkout/cancel/{orderItemId}(id=${user.id}, orderItemId=${order.id})}" th:method="POST">
+                            <form onsubmit="return cancel();" th:action="@{/{id}/order/cancel/{orderId}(id=${user.id}, orderId=${order.id})}" th:method="POST">
                                 <button type="submit">주문취소</button>
                             </form>
                             <script th:inline="javascript">

@@ -64,4 +64,13 @@ public class OrderService {
     public Order findByOrderId(Long orderId) {
         return orderRepository.findById(orderId).orElse(null);
     }
+
+    public void cancelOrder(Long userId,Long orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        order.cancelOrder();
+        orderRepository.save(order);
+        User user = userRepository.findByUserId(userId).orElse(null);
+        user.addMoney(order.getTotalPrice());
+        userRepository.save(user);
+    }
 }
