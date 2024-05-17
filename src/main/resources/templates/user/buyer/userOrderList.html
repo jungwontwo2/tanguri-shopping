@@ -102,6 +102,7 @@
                         <th scope="col">가격</th>
                         <th scope="col">주문금액</th>
                         <th scope="col">주문날짜</th>
+                        <th scope="col">주문상태</th>
                         <th scope="col">주문취소</th>
                     </tr>
                     </thead>
@@ -114,8 +115,9 @@
                         <td th:text="${order.product.getPrice()}">가격</td>
                         <td th:text="${order.totalPrice}">주문금액</td>
                         <td th:text="${order.getOrderDate()}">날짜</td>
-                        <td th:if="${order.status} == '주문취소'">취소완료</a></td>
-                        <td th:unless="${order.status} == '주문취소'">
+                        <td th:text="${order.status.name()}">주문상태</td>
+                        <td th:if="${order.status} == '주문취소'">주문취소</a></td>
+                        <td th:unless="${order.status.name()} == '배송중' or ${order.status.name()}=='배송완료' or ${order.status.name()}=='주문취소'">
                             <form onsubmit="return cancel();" th:action="@{/user/{id}/checkout/cancel/{orderItemId}(id=${user.id}, orderItemId=${order.id})}" th:method="POST">
                                 <button type="submit">주문취소</button>
                             </form>
