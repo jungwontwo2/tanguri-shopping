@@ -89,12 +89,12 @@
                 <p class="lead" th:text="|상세설명: ${product.getDetail()}|">아이템 설명</p>
 
                 <div class="d-flex" sec:authorize="hasRole('ROLE_SELLER')" th:if="${product.getUser().getId()} == ${user.getId()}">
-                        <form class="d-flex" th:action="@{/product/modify/{id} (id=${product.getId()})}" method="post">
+                        <form class="d-flex" th:action="@{/product/modify/{id} (id=${product.getId()})}" method="get">
                             <button class="btn btn-outline-dark flex-shrink-0" type="submit" >
                                 상품 수정
                             </button>
                         </form>
-                        <form class="d-flex" th:action="@{/product/delete/{id} (id=${product.getId()})}" method="post">
+                        <form class="d-flex" th:action="@{/product/delete/{id} (id=${product.getId()})}" method="get">
                             <button class="btn btn-outline-dark flex-shrink-0" type="submit">
                                 상품 삭제
                             </button>

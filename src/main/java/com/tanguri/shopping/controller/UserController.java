@@ -204,7 +204,7 @@ public class UserController {
     }
     @PostMapping("/user/modify/{id}")
     public String modifyUserInfo(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                 @ModelAttribute("userModifyDto")UserModifyDto userModifyDto){
+                                 @ModelAttribute UserModifyDto userModifyDto){
         User user = userService.findUser(id);
         userService.modifyUserInfo(id,userModifyDto);
         return "redirect:/user/"+id;

@@ -18,6 +18,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("select p from Product p join fetch p.image")
     Page<Product> findAll(Pageable pageable);
 
-    @Query("select p from Product p join fetch p.image where p.id = :id")
+    @Query("select p from Product p join fetch p.image join fetch p.user where p.id = :id")
     Optional<Product> findById(@Param("id") Long id);
 }

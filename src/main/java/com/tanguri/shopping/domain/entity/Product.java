@@ -1,6 +1,7 @@
 package com.tanguri.shopping.domain.entity;
 
 
+import com.tanguri.shopping.domain.dto.product.ModifyProductDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,5 +40,12 @@ public class Product {
     private String name;
     public void decreaseStock(Integer count){
         stock-=count;
+    }
+    public void modifyProduct(ModifyProductDto modifyProductDto, Image image){
+        this.name=modifyProductDto.getName();
+        this.detail = modifyProductDto.getDetail();
+        this.price = modifyProductDto.getPrice();
+        this.stock = modifyProductDto.getStock();
+        this.image=image;
     }
 }

@@ -1,9 +1,6 @@
 package com.tanguri.shopping.service;
 
-import com.tanguri.shopping.domain.dto.product.AddProductDto;
-import com.tanguri.shopping.domain.dto.product.BuyOrCartProductDto;
-import com.tanguri.shopping.domain.dto.product.PagingProductDto;
-import com.tanguri.shopping.domain.dto.product.ViewProductDto;
+import com.tanguri.shopping.domain.dto.product.*;
 import com.tanguri.shopping.domain.entity.*;
 import com.tanguri.shopping.domain.enums.Status;
 import com.tanguri.shopping.repository.*;
@@ -33,7 +30,13 @@ public class ProductService {
         user.getProducts().add(product);
         productRepository.save(product);
 
-        MultipartFile image = addProductDto.getImage();
+        Image imageBuilder = getImage(addProductDto.getImage(), product);
+        imageRepository.save(imageBuilder);
+
+        return product.getId();
+    }
+
+    private static Image getImage(MultipartFile image, Product product) throws IOException {
         String originalFilename = image.getOriginalFilename();
         String imgName = "";
 
@@ -55,10 +58,9 @@ public class ProductService {
                 .uuid_image_name(savedFileName)
                 .product(product)
                         .build();
-        imageRepository.save(imageBuilder);
-
-        return product.getId();
+        return imageBuilder;
     }
+
     public Page<PagingProductDto> getAllProducts(Pageable pageable){
         int page = pageable.getPageNumber()-1;
         int pageLimit= 12;
@@ -86,6 +88,13 @@ public class ProductService {
         Product product = productRepository.findById(id).orElse(null);
         return new ViewProductDto(product);
     }
+    public ModifyProductDto getModifyProductDto(Long id){
+        Product product = productRepository.findById(id).orElse(null);
+        System.out.println("product.getId() = " + product.getId());
+        ModifyProductDto modifyProductDto = new ModifyProductDto(product);
+        System.out.println("modifyProductDto.getId() = " + modifyProductDto.getId());
+        return modifyProductDto;
+    }
 
     public Long productInCart(Long productId,Long userId,BuyOrCartProductDto buyOrCartProductDto){
         Product product = productRepository.findById(productId).orElse(null);
@@ -99,5 +108,15 @@ public class ProductService {
                 .build();
         cartItemRepository.save(cartItem);
         return cartItem.getId();
+    }
+
+    public void modifyProduct(Long id, ModifyProductDto modifyProductDto) throws IOException {
+        Product product = productRepository.findById(id).orElse(null);
+        Image productImage = product.getImage();
+        imageRepository.delete(productImage);
+        Image image = getImage(modifyProductDto.getImgFile(), product);
+        imageRepository.save(image);
+        product.modifyProduct(modifyProductDto,image);
+        productRepository.save(product);
     }
 }
