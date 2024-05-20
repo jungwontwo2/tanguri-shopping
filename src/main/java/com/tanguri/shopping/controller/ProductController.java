@@ -46,14 +46,18 @@ public class ProductController {
 
     @PostMapping("product/upload")
     public String productUpload(@Validated @ModelAttribute("product") AddProductDto addProductDto, BindingResult bindingResult,
-                                @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) throws IOException {
+                                @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model,
+                                HttpServletRequest request) throws IOException {
         if (bindingResult.hasErrors()) {
             Long id = customUserDetails.getUserEntity().getId();
             model.addAttribute("user", userService.findUser(id));
             return "user/seller/addProduct";
         }
-        productService.uploadProduct(addProductDto, customUserDetails.getId());
-        return "redirect:/";
+        Long productId = productService.uploadProduct(addProductDto, customUserDetails.getId());
+        request.setAttribute("msg", "상품 업로드를 완료했습니다.");
+        String redirectUrl = "/product/" + productId;
+        request.setAttribute("redirectUrl", redirectUrl);
+        return "common/messageRedirect";
     }
 
     @GetMapping("product/{id}")
@@ -95,8 +99,10 @@ public class ProductController {
             return "common/messageRedirect";
         } else {
             orderService.orderProduct(productId, customUserDetails.getId(), buyOrCartProductDto);
-            System.out.println("buyOrCartProductDto = " + buyOrCartProductDto.getCount());
-            return "redirect:/product/" + productId;
+            request.setAttribute("msg", "주문을 완료했습니다.");
+            String redirectUrl = "/product/"+productId;
+            request.setAttribute("redirectUrl", redirectUrl);
+            return "common/messageRedirect";
         }
     }
 
@@ -107,7 +113,10 @@ public class ProductController {
                                 HttpServletRequest request) {
         Long id = customUserDetails.getUserEntity().getId();
         productService.productInCart(productId, customUserDetails.getId(), buyOrCartProductDto);
-        return "redirect:/product/" + productId;
+        request.setAttribute("msg", "장바구니에 상품을 담았습니다.");
+        String redirectUrl = "/product/"+productId;
+        request.setAttribute("redirectUrl", redirectUrl);
+        return "common/messageRedirect";
     }
 
     @GetMapping("product/modify/{id}")
@@ -122,9 +131,14 @@ public class ProductController {
     @PostMapping("product/modify/{id}")
     public String productModify(@PathVariable("id")Long id,
                                 @ModelAttribute("product")ModifyProductDto modifyProductDto,
-                                @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                HttpServletRequest request) throws IOException {
         if (customUserDetails!=null){
             productService.modifyProduct(id,modifyProductDto);
+            request.setAttribute("msg", "상품 정보 수정을 완료했습니다.");
+            String redirectUrl = "/product/"+id;
+            request.setAttribute("redirectUrl", redirectUrl);
+            return "common/messageRedirect";
         }
         return "redirect:/product/"+id;
     }

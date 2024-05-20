@@ -73,14 +73,19 @@ public class UserController {
     }
 
     @GetMapping("/user/login")
-    public String LoginPage(@ModelAttribute("user") UserLoginDto userLoginDto, Model model, HttpServletRequest request) {
+    public String LoginPage(@ModelAttribute("user") UserLoginDto userLoginDto, Model model, HttpServletRequest request,
+                            @RequestParam(value = "error",required = false)String error,
+                            @RequestParam(value = "exception",required = false)String exception) {
         String referer = request.getHeader("Referer");
         request.getSession().setAttribute("prevPage", referer);
+        model.addAttribute("error",error);
+        model.addAttribute("exception",exception);
         return "user/userlogin";
     }
 
     @PostMapping("/user/login")
-    public String PostLogin(@Validated @ModelAttribute("user") UserLoginDto userLoginDto, BindingResult bindingResult) {
+    public String PostLogin(@Validated @ModelAttribute("user") UserLoginDto userLoginDto, BindingResult bindingResult,
+                            Model model) {
         if (bindingResult.hasErrors()) {
             return "user/userlogin";
         }
