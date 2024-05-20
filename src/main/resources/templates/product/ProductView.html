@@ -116,18 +116,21 @@
                 </form>
 
 
-                    <div class="d-flex">
-                        <form class="d-flex" sec:authorize="!isAuthenticated()" th:action="@{/product/order/{productId}(productId=${product.id})}" method="post">
-                            <button class="btn btn-outline-dark flex-shrink-0" type="submit" >
-                                구매하기
-                            </button>
-                        </form>
-                        <form class="d-flex" sec:authorize="!isAuthenticated()" th:action="@{/user/cart/{productId}(productId=${product.id})}" method="post">
-                            <button class="btn btn-outline-dark" type="submit">
-                                <i class="bi-cart-fill me-1">장바구니</i>
-                            </button>
-                        </form>
-                    </div>
+
+                <form class="d-flex" sec:authorize="!isAuthenticated()" th:action="@{/product/order/{productId}(productId=${product.id})}" method="post">
+                    <input class="form-control text-center me-3" id="count" th:field="*{count}" name="count" type="num" value="1"
+                           style="max-width: 3rem"/>
+                    <button class="btn btn-outline-dark flex-shrink-0" type="submit" >
+                        구매하기
+                    </button>
+                </form>
+                <form class="d-flex" sec:authorize="!isAuthenticated()" th:action="@{/user/cart/{productId}(productId=${product.id})}" method="post">
+                    <input class="form-control text-center me-3" id="count" th:field="*{count}" name="count" type="num" value="1" style="max-width: 3rem"/>
+                    <button class="btn btn-outline-dark" type="submit">
+                        <i class="bi-cart-fill me-1">장바구니</i>
+                    </button>
+                </form>
+
             </div>
         </div>
     </div>
