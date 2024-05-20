@@ -23,6 +23,7 @@ public class AddProductDto {
 
     public static Product ProductDtoToProduct(AddProductDto addProductDto, User user){
         Product product = Product.builder()
+                .soldProductCount(0)
                 .name(addProductDto.getName())
                 .detail(addProductDto.getDetail())
                 .price(addProductDto.getPrice())
