@@ -94,7 +94,7 @@
                                 상품 수정
                             </button>
                         </form>
-                        <form class="d-flex" th:action="@{/product/delete/{id} (id=${product.getId()})}" method="get">
+                        <form class="d-flex" th:action="@{/product/delete/{id} (id=${product.getId()})}" method="post">
                             <button class="btn btn-outline-dark flex-shrink-0" type="submit">
                                 상품 삭제
                             </button>

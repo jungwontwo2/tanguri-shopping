@@ -128,4 +128,16 @@ public class ProductController {
         }
         return "redirect:/product/"+id;
     }
+    @PostMapping("product/delete/{id}")
+    public String productDelete(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                HttpServletRequest request){
+        if(customUserDetails!=null){
+            productService.deleteProduct(customUserDetails.getId(),id);
+            request.setAttribute("msg", "삭제를 완료했습니다.");
+            String redirectUrl = "/";
+            request.setAttribute("redirectUrl", redirectUrl);
+            return "common/messageRedirect";
+        }
+        else return "/";
+    }
 }

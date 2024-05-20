@@ -1,5 +1,7 @@
 package com.tanguri.shopping.service;
 
+import com.tanguri.shopping.domain.dto.error.CustomException;
+import com.tanguri.shopping.domain.dto.error.ErrorCode;
 import com.tanguri.shopping.domain.dto.product.*;
 import com.tanguri.shopping.domain.entity.*;
 import com.tanguri.shopping.domain.enums.Status;
@@ -118,5 +120,15 @@ public class ProductService {
         imageRepository.save(image);
         product.modifyProduct(modifyProductDto,image);
         productRepository.save(product);
+    }
+
+    public void deleteProduct(Long userId, Long productId) {
+        Product product = productRepository.findById(productId).orElse(null);
+        if(product.getUser().getId()!=userId){
+            throw new CustomException(ErrorCode.PRODUCT_OWNER);
+        }
+        else {
+            productRepository.delete(product);
+        }
     }
 }
