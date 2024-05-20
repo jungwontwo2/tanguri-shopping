@@ -1,9 +1,6 @@
 package com.tanguri.shopping.controller;
 
-import com.tanguri.shopping.domain.dto.product.AddProductDto;
-import com.tanguri.shopping.domain.dto.product.BuyOrCartProductDto;
-import com.tanguri.shopping.domain.dto.product.ModifyProductDto;
-import com.tanguri.shopping.domain.dto.product.ViewProductDto;
+import com.tanguri.shopping.domain.dto.product.*;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.entity.Cart;
 import com.tanguri.shopping.domain.entity.CartItem;
@@ -14,16 +11,16 @@ import com.tanguri.shopping.service.ProductService;
 import com.tanguri.shopping.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -153,5 +150,64 @@ public class ProductController {
             return "common/messageRedirect";
         }
         else return "/";
+    }
+
+    @GetMapping("product/list")
+    public String productList(@PageableDefault(page = 1) Pageable pageable, Model model,
+                              @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                              @RequestParam(name = "search",required = false)String search) {
+        if (customUserDetails != null) {
+            Long id = customUserDetails.getUserEntity().getId();
+            model.addAttribute("user", userService.findUser(id));
+        }
+        if(search==null){
+            Page<PagingProductDto> allProducts = productService.getAllProducts(pageable);
+            int blockLimit = 5;
+            int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+            int endPage = Math.min((startPage + blockLimit - 1), allProducts.getTotalPages());
+            model.addAttribute("productDtos", allProducts);
+            model.addAttribute("startPage", startPage);
+            model.addAttribute("endPage", endPage);
+            return "product/ProductList";
+        }
+        else {
+            Page<PagingProductDto> searchProducts = productService.getProductsBySearch(pageable,search);
+            int blockLimit = 5;
+            int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+            int endPage = Math.min((startPage + blockLimit - 1), searchProducts.getTotalPages());
+            model.addAttribute("productDtos", searchProducts);
+            model.addAttribute("startPage", startPage);
+            model.addAttribute("endPage", endPage);
+            return "product/ProductList";
+        }
+    }
+    @GetMapping("product/list/popular")
+    public String productListPopular(@PageableDefault(page = 1) Pageable pageable, Model model,
+                              @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                              @RequestParam(name = "search",required = false)String search) {
+        if (customUserDetails != null) {
+            Long id = customUserDetails.getUserEntity().getId();
+            model.addAttribute("user", userService.findUser(id));
+        }
+        if(search==null){
+            Page<PagingProductDto> allProducts = productService.getAllPopularProducts(pageable);
+            int blockLimit = 5;
+            int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+            int endPage = Math.min((startPage + blockLimit - 1), allProducts.getTotalPages());
+            model.addAttribute("productDtos", allProducts);
+            model.addAttribute("startPage", startPage);
+            model.addAttribute("endPage", endPage);
+            return "product/ProductList";
+        }
+        else {
+            Page<PagingProductDto> searchProducts = productService.getAllPopularProductsBySearch(pageable,search);
+            int blockLimit = 5;
+            int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+            int endPage = Math.min((startPage + blockLimit - 1), searchProducts.getTotalPages());
+            model.addAttribute("productDtos", searchProducts);
+            model.addAttribute("startPage", startPage);
+            model.addAttribute("endPage", endPage);
+            return "product/ProductList";
+        }
     }
 }

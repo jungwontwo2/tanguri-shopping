@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,22 +69,35 @@ public class ProductService {
         int pageLimit= 12;
         PageRequest pageRequest = PageRequest.of(page, pageLimit);
         Page<Product> products = productRepository.findAll(pageRequest);
-//        productRepository.findal
-//        List<Product> all = productRepository.findAll();
-//        for (Product product : all) {
-//            System.out.println("product.getName() = " + product.getName());
-//        }
-//        System.out.println("products.getTotalPages() = " + products.getTotalPages());
-//        System.out.println("products.getTotalElements() = " + products.getTotalElements());
-//        System.out.println("products.getNumber() = " + products.getNumber());
-//        System.out.println("products.getSize() = " + products.getSize());
-//        System.out.println("products.hasNext() = " + products.hasNext());
-//        System.out.println("products.isFirst() = " + products.isFirst());
-//        System.out.println("products.isEmpty() = " + products.isEmpty());
         Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
-//        for (PagingProductDto pagingProductDto : pagingProductDtos) {
-//            System.out.println("pagingProductDto.getName() = " + pagingProductDto.getName());
-//        }
+
+        return pagingProductDtos;
+    }
+
+    public Page<PagingProductDto> getProductsBySearch(Pageable pageable,String search){
+        int page = pageable.getPageNumber()-1;
+        int pageLimit=12;
+        PageRequest pageRequest = PageRequest.of(page, pageLimit, Sort.by(Sort.Order.desc("id")));
+        Page<Product> products = productRepository.findBySearch(pageRequest, search);
+        Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
+        return pagingProductDtos;
+    }
+    public Page<PagingProductDto> getAllPopularProducts(Pageable pageable){
+        int page = pageable.getPageNumber()-1;
+        int pageLimit= 12;
+        PageRequest pageRequest = PageRequest.of(page, pageLimit);
+        Page<Product> products = productRepository.findAllPopular(pageRequest);
+        Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
+
+        return pagingProductDtos;
+    }
+
+    public Page<PagingProductDto> getAllPopularProductsBySearch(Pageable pageable, String search) {
+        int page = pageable.getPageNumber()-1;
+        int pageLimit= 12;
+        PageRequest pageRequest = PageRequest.of(page, pageLimit);
+        Page<Product> products = productRepository.findAllPopularProductsBySearch(pageRequest,search);
+        Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
         return pagingProductDtos;
     }
     public ViewProductDto getProduct(Long id) {
@@ -131,4 +145,6 @@ public class ProductService {
             productRepository.delete(product);
         }
     }
+
+
 }
