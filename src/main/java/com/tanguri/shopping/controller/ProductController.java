@@ -115,17 +115,17 @@ public class ProductController {
                                     @AuthenticationPrincipal CustomUserDetails customUserDetails){
         User user = userService.findUser(customUserDetails.getId());
         model.addAttribute("user",user);
-        model.addAttribute("product",productService.getProduct(id));
+        ModifyProductDto product = productService.getModifyProductDto(id);
+        model.addAttribute("product",product);
         return "user/seller/productModify";
     }
     @PostMapping("product/modify/{id}")
     public String productModify(@PathVariable("id")Long id,
                                 @ModelAttribute("product")ModifyProductDto modifyProductDto,
                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
-//        if (customUserDetails!=null){
-//            productService.modifyProduct(id,modifyProductDto);
-//        }
-        productService.modifyProduct(id,modifyProductDto);
+        if (customUserDetails!=null){
+            productService.modifyProduct(id,modifyProductDto);
+        }
         return "redirect:/product/"+id;
     }
 }

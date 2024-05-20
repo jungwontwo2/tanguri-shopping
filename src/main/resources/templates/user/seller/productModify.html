@@ -40,33 +40,33 @@
             <h2>상품 수정</h2>
         </div>
         <div>
-            <form th:action="@{/product/modify/{id}(id=${product.id})}" method="post" enctype="multipart/form-data">
+            <form th:action="@{/product/modify/{id}(id=${product.id})}" method="post" enctype="multipart/form-data" th:object="${product}">
                 <div class="row g-3">
                     <hr/>
                     <div class="col-12">
                         <label for="name" class="form-label">상품 이름</label>
-                        <input type="text" class="form-control" id=name name="name" th:placeholder="${product.getName()}">
+                        <input type="text" class="form-control" id=name th:field="*{name}" th:placeholder="${product.getName()}">
                         <div class="invalid-feedback">
                             Your name is required.
                         </div>
                     </div>
                     <div class="col-12">
                         <label for="detail" class="form-label">상품 설명</label>
-                        <input type="text" class="form-control" id="detail" name="detail" th:placeholder="${product.getDetail()}">
+                        <input type="text" class="form-control" id="detail" th:field="*{detail}" th:placeholder="${product.getDetail()}">
                         <div class="invalid-feedback">
                             Input is empty.
                         </div>
                     </div>
                     <div class="col-12">
                         <label for="price" class="form-label">상품 가격</label>
-                        <input type="text" class="form-control" id="price" name="price" th:placeholder="${product.getPrice()}">
+                        <input type="text" class="form-control" id="price" th:field="*{price}" th:placeholder="${product.getPrice()}">
                         <div class="invalid-feedback">
                             Input is empty.
                         </div>
                     </div>
                     <div class="col-12">
                         <label for="stock" class="form-label">상품 재고</label>
-                        <input type="text" class="form-control" id="stock" name="stock"
+                        <input type="text" class="form-control" id="stock" th:field="*{stock}"
                                th:placeholder="${product.getStock()}">
                         <div class="invalid-feedback">
                             Input is empty.
@@ -74,7 +74,7 @@
                     </div>
                     <div class="col-12">
                         <label for="imgFile" class="form-label">상품 이미지 업로드</label>
-                        <input type="file" class="form-control" id="imgFile" name="imgFile" accept="image/*">
+                        <input type="file" class="form-control" id="imgFile" th:field="*{imgFile}" accept="image/*">
                         <div class="invalid-feedback">
                             Input is empty.
                         </div>
