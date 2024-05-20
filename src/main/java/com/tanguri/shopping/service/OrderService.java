@@ -20,6 +20,7 @@ public class OrderService {
     public Long orderProduct(Long productId, Long userId, BuyOrCartProductDto buyOrCartProductDto){
         Product product = productRepository.findById(productId).orElse(null);
         product.decreaseStock(buyOrCartProductDto.getCount());
+        product.addSoldProductCount(buyOrCartProductDto.getCount());
         User user = userRepository.findById(userId).orElse(null);
         user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
         Order order = Order.builder()
@@ -69,6 +70,8 @@ public class OrderService {
         Order order = orderRepository.findById(orderId).orElse(null);
         order.cancelOrder();
         orderRepository.save(order);
+        Product product = order.getProduct();
+        product.minusProductCount(order.getProductCount());
         User user = userRepository.findByUserId(userId).orElse(null);
         user.addMoney(order.getTotalPrice());
         userRepository.save(user);

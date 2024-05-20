@@ -35,6 +35,7 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
 
+    private Integer soldProductCount;
     private Integer stock;
     private String detail;
     private Integer price;
@@ -48,5 +49,13 @@ public class Product {
         this.price = modifyProductDto.getPrice();
         this.stock = modifyProductDto.getStock();
         this.image=image;
+    }
+
+    public void addSoldProductCount(Integer count) {
+        soldProductCount+=count;
+    }
+
+    public void minusProductCount(Integer count) {
+        soldProductCount-=count;
     }
 }
