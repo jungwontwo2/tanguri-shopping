@@ -32,9 +32,6 @@ public class OrderService {
         }
         user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
         Order order = Order.builder()
-                //.productId(productId)
-                //.productCount(buyOrCartProductDto.getCount())
-                //.productPrice(product.getPrice())
                 .user(user)
                 .product(product)
                 .productCount(buyOrCartProductDto.getCount())
@@ -62,7 +59,9 @@ public class OrderService {
         List<Order> orders = orderRepository.findAllByUserId(id);
         Integer totalOrderCount=0;
         for (Order order : orders) {
-            totalOrderCount+=order.getProductCount();
+            if(order.getStatus()!=Status.주문취소){
+                totalOrderCount+=order.getProductCount();
+            }
         }
         return totalOrderCount;
     }
