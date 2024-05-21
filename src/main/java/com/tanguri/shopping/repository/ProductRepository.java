@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -29,4 +30,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
     @Query("select p from Product p join fetch p.image where p.name like %:search% order by p.soldProductCount desc")
     Page<Product> findAllPopularProductsBySearch(Pageable pageable,@Param("search")String search);
+
+    @Query("select p from Product p where p.user.id = :userId")
+    List<Product> findAllBySellerId(@Param("userId") Long userId);
 }

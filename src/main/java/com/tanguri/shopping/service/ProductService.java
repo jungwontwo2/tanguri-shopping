@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -147,4 +148,7 @@ public class ProductService {
     }
 
 
+    public List<Product> getAllProductsBySellerId(Long userId) {
+        return productRepository.findAllBySellerId(userId);
+    }
 }

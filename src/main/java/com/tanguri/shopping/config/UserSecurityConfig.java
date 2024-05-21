@@ -46,7 +46,7 @@ public class UserSecurityConfig {
                 .usernameParameter("username")
                 .successHandler(new CustomAuthenticationSuccessHandler())
                 .failureHandler(CustomAuthFailureHandler)
-                //.defaultSuccessUrl("/",false)
+//                .defaultSuccessUrl("/",false)
                 .permitAll());
 
 
