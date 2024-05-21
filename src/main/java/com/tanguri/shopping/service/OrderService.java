@@ -1,5 +1,7 @@
 package com.tanguri.shopping.service;
 
+import com.tanguri.shopping.domain.dto.error.CustomException;
+import com.tanguri.shopping.domain.dto.error.ErrorCode;
 import com.tanguri.shopping.domain.dto.product.BuyOrCartProductDto;
 import com.tanguri.shopping.domain.entity.*;
 import com.tanguri.shopping.domain.enums.Status;
@@ -19,9 +21,15 @@ public class OrderService {
     private final DeliveryRepository deliveryRepository;
     public Long orderProduct(Long productId, Long userId, BuyOrCartProductDto buyOrCartProductDto){
         Product product = productRepository.findById(productId).orElse(null);
+        if(product.getStock()<buyOrCartProductDto.getCount()){
+            throw new CustomException(ErrorCode.STOCK_LACK);
+        }
         product.decreaseStock(buyOrCartProductDto.getCount());
         product.addSoldProductCount(buyOrCartProductDto.getCount());
         User user = userRepository.findById(userId).orElse(null);
+        if(buyOrCartProductDto.getCount()*product.getPrice()>user.getMoney()){
+            throw new CustomException(ErrorCode.MONEY_LACK);
+        }
         user.useMoney(buyOrCartProductDto.getCount()*product.getPrice());
         Order order = Order.builder()
                 //.productId(productId)

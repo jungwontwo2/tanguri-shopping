@@ -65,11 +65,7 @@ public class ProductController {
             Long userId = customUserDetails.getUserEntity().getId();
             Cart cart = userService.getCartByLoginId(userId);
             List<CartItem> cartItems = cart.getCartItems();
-            int totalProductCount = 0;
-            for (CartItem cartItem : cartItems) {
-                totalProductCount += cartItem.getCount();
-            }
-            model.addAttribute("totalProductCount", totalProductCount);
+            model.addAttribute("totalProductCount", cartItems.size());
             model.addAttribute("user", userService.findUser(userId));
         }
         ViewProductDto product = productService.getProduct(id);

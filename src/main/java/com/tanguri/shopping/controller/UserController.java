@@ -124,13 +124,11 @@ public class UserController {
         Cart cart = userService.getCartByLoginId(id);
         List<CartItem> cartItems = cart.getCartItems();
         int totalPrice = 0;
-        int totalProductCount = 0;
         for (CartItem cartItem : cartItems) {
             totalPrice += cartItem.getCount() * cartItem.getProduct().getPrice();
-            totalProductCount += cartItem.getCount();
         }
         model.addAttribute("totalPrice", totalPrice);
-        model.addAttribute("totalProductCount", totalProductCount);
+        model.addAttribute("totalProductCount", cartItems.size());
         model.addAttribute("user", user);
         model.addAttribute("cartItems", cartItems);
         return "user/buyer/userCart";
@@ -141,12 +139,8 @@ public class UserController {
                             Model model) {
         User user = userService.findUser(customUserDetails.getId());
         List<CartItem> cartItems = user.getCart().getCartItems();
-        int totalProductCount = 0;
-        for (CartItem cartItem : cartItems) {
-            totalProductCount += cartItem.getCount();
-        }
         model.addAttribute("user", user);
-        model.addAttribute("totalProductCount", totalProductCount);
+        model.addAttribute("totalProductCount", cartItems.size());
         return "user/money";
     }
 
@@ -191,11 +185,7 @@ public class UserController {
                            Model model){
         User user = userService.findUser(customUserDetails.getId());
         List<CartItem> cartItems = user.getCart().getCartItems();
-        int totalProductCount = 0;
-        for (CartItem cartItem : cartItems) {
-            totalProductCount += cartItem.getCount();
-        }
-        model.addAttribute("totalProductCount",totalProductCount);
+        model.addAttribute("totalProductCount",cartItems.size());
         model.addAttribute("user",user);
         return "user/userPage";
     }

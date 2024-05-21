@@ -96,6 +96,7 @@
                         <th scope="col">가격</th>
                         <th scope="col">재고</th>
                         <th scope="col">판매량</th>
+                        <th scope="col">수정</th>
                         <th scope="col">삭제</th>
                     </tr>
                     </thead>
@@ -107,7 +108,12 @@
                         <td th:text="${product.getPrice()}">가격</td>
                         <td th:text="${product.getStock()}">재고</td>
                         <td th:text="${product.getSoldProductCount()}">판매량</td>
-                        <td class="btn btn-outline-dark"><a th:href="@{/item/delete/{id}(id=${product.getId()})}" style="text-decoration: none">삭제</a></td>
+                        <td>
+                            <a th:href="@{/product/modify/{id}(id=${product.getId()})}" style="text-decoration: none">수정</a>
+                        </td>
+                        <td>
+                            <a th:href="@{/product/delete/{id}(id=${product.getId()})}" style="text-decoration: none">삭제</a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
