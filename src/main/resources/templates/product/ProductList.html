@@ -11,11 +11,14 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="/css/styles.css" rel="stylesheet" />
     <style>
-        .page {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        .page{
+        display:flex;
+        justify-content: center;
+        align-items:center;
+        }
+        .page a{
+            display: inline-block;
+            margin-right: 15px;
         }
     </style>
 </head>
@@ -93,8 +96,6 @@
             <!-- 첫번째 아이템 -->
             <div class="col mb-5" th:each="product : ${productDtos}">
                 <div class="card h-100" style="width:200px; height:180px;">
-<!--                    <a th:href="@{product/{id}(id=${product.id})}">-->
-                    <!-- Product image-->
                     <img class="card-img-top" th:src="@{${product.getImageUrl()}}" style="width:200px; height:160px; margin-left:auto; margin-right:auto;" >
                     <!-- Product details-->
                     <div class="card-body p-4">
@@ -115,7 +116,7 @@
     </div>
     <div class="page">
         <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
-            <a th:if="${page != nowPage}" th:href="@{/item/list(page = ${page - 1}, searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>
+            <a th:if="${page != nowPage}" th:href="@{/product/list(page = ${page}, searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>
             <strong th:if="${page == nowPage}" th:text="${page}" style="color : red"></strong>
         </th:block>
     </div>

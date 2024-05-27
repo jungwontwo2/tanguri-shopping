@@ -100,57 +100,26 @@
 
 <!-- Section-->
 <section class="py-5">
-    <div class="container">
-        <div class="row">
-            <th:block th:each="product, iterStat : ${productDtos}">
-                <div class="col-md-3 mb-4" style="width:300px; height:200px;">
-                    <a th:href="@{product/{id}(id=${product.id})}">
-                    <div class="card">
-                        <img th:src="@{${product.getImageUrl()}}" class="card-img-top" style="width:250px; height:200px; margin-left:auto; margin-right:auto;" >
-                        <div class="card-body">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+            <div class="col mb-5" th:each="product : ${productDtos}">
+                <div class="card h-100" style="width:200px; height:160px;">
+                    <img class="card-img-top" th:src="@{${product.getImageUrl()}}" style="width:200px; height:140px; margin-left:auto; margin-right:auto;" >
+                        <div class="card-body p-4">
                             <h5 class="card-title" th:text="${product.name}">상품명</h5>
                             <p class="card-text" th:text="${product.status}">판매상태</p>
                             <p class="card-text">$<span th:text="${product.price}">가격</span></p>
                         </div>
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" th:href="@{/product/{id}(id=${product.getId()})}">상세보기</a></div>
                     </div>
-                    </a>
                 </div>
-                <th:block th:if="${iterStat.count % 4 == 0}">
+
+                </div>
+            </div>
         </div>
-        <div class="row">
-        </th:block>
-        </th:block>
     </div>
-    </div>
-<!--    <div class="container px-4 px-lg-5 mt-5">-->
-<!--        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">-->
-
-<!--             첫번째 아이템-->
-<!--            <div class="col mb-5" th:each="product : ${productDtos}">-->
-<!--                <div class="card h-100">-->
-<!--                    &lt;!&ndash; Product image&ndash;&gt;-->
-<!--                    <img class="card-img-top" th:src="@{${product.getImage().getImageUrlz()}}" alt="..." />-->
-<!--                    &lt;!&ndash; Product details&ndash;&gt;-->
-<!--                    <div class="card-body p-4">-->
-<!--                        <div class="text-center">-->
-<!--                            &lt;!&ndash; Product name\&ndash;&gt;-->
-<!--                            <h5 class="fw-bolder" th:text="${item.getName()}">아이템이름</h5>-->
-<!--                            &lt;!&ndash; Product price&ndash;&gt;-->
-<!--                            <p th:text="|${item.getPrice()} 원|">아이템 가격</p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    &lt;!&ndash; Product actions&ndash;&gt;-->
-<!--                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">-->
-<!--                        <div class="text-center">-->
-<!--                            <a class="btn btn-outline-dark mt-auto" sec:authorize="isAuthenticated()" th:href="@{/item/view/{id}(id=${item.getId()})}">상세보기</a>-->
-<!--                            <a class="btn btn-outline-dark mt-auto" sec:authorize="!isAuthenticated()" th:href="@{/item/view/nonlogin/{id}(id=${item.getId()})}">상세보기</a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--        </div>-->
-<!--    </div>-->
 </section>
 
 <!-- Footer-->

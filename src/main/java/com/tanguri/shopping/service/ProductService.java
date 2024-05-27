@@ -67,7 +67,7 @@ public class ProductService {
 
     public Page<PagingProductDto> getAllProducts(Pageable pageable){
         int page = pageable.getPageNumber()-1;
-        int pageLimit= 12;
+        int pageLimit= 8;
         PageRequest pageRequest = PageRequest.of(page, pageLimit);
         Page<Product> products = productRepository.findAll(pageRequest);
         Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
@@ -77,7 +77,7 @@ public class ProductService {
 
     public Page<PagingProductDto> getProductsBySearch(Pageable pageable,String search){
         int page = pageable.getPageNumber()-1;
-        int pageLimit=12;
+        int pageLimit=8;
         PageRequest pageRequest = PageRequest.of(page, pageLimit, Sort.by(Sort.Order.desc("id")));
         Page<Product> products = productRepository.findBySearch(pageRequest, search);
         Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
@@ -85,7 +85,7 @@ public class ProductService {
     }
     public Page<PagingProductDto> getAllPopularProducts(Pageable pageable){
         int page = pageable.getPageNumber()-1;
-        int pageLimit= 12;
+        int pageLimit= 8;
         PageRequest pageRequest = PageRequest.of(page, pageLimit);
         Page<Product> products = productRepository.findAllPopular(pageRequest);
         Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
@@ -95,7 +95,7 @@ public class ProductService {
 
     public Page<PagingProductDto> getAllPopularProductsBySearch(Pageable pageable, String search) {
         int page = pageable.getPageNumber()-1;
-        int pageLimit= 12;
+        int pageLimit= 8;
         PageRequest pageRequest = PageRequest.of(page, pageLimit);
         Page<Product> products = productRepository.findAllPopularProductsBySearch(pageRequest,search);
         Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
