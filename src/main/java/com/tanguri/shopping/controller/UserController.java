@@ -43,6 +43,7 @@ public class UserController {
         if (customUserDetails != null) {
             Long id = customUserDetails.getUserEntity().getId();
             model.addAttribute("user", userService.findUser(id));
+            customUserDetails.getUserEntity().getRole();
         }
         Page<PagingProductDto> allProducts = productService.getAllProducts(pageable);
 

@@ -1,6 +1,8 @@
 package com.tanguri.shopping.config;
 
 import com.tanguri.shopping.handler.CustomAuthenticationSuccessHandler;
+import com.tanguri.shopping.handler.CustomSuccessHandler;
+import com.tanguri.shopping.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +26,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class UserSecurityConfig {
 
     private final AuthenticationFailureHandler CustomAuthFailureHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomSuccessHandler customSuccessHandler;
 
     @Bean//비밀번호 암호화
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -38,7 +42,7 @@ public class UserSecurityConfig {
                 .requestMatchers("/user/cart/**","/product/order/**").hasRole("BUYER")
                 .requestMatchers("/", "/user/login", "/logout","/user/signup/**","/user/signup","/seller/signup","/join/loginIdCheck","/join/nickNameCheck","/contents/**","/contents","/error","product/**").permitAll()//해당 사이트면 모두 허용
                 .anyRequest().authenticated()//나머지는 로그인 했으면 가능
-
+//                        .anyRequest().permitAll()
         );
 
         http.formLogin((auth) -> auth.loginPage("/user/login")//로그인 페이지
@@ -48,6 +52,12 @@ public class UserSecurityConfig {
                 .failureHandler(CustomAuthFailureHandler)
 //                .defaultSuccessUrl("/",false)
                 .permitAll());
+
+        http
+                .oauth2Login((oauth2)->oauth2.userInfoEndpoint((userInfoEndpointConfig)->userInfoEndpointConfig
+                                .userService(customOAuth2UserService))
+                        .successHandler(customSuccessHandler)
+                        .defaultSuccessUrl("/",false));
 
 
         http.logout((logout)->logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

@@ -1,5 +1,6 @@
 package com.tanguri.shopping.service;
 
+import com.tanguri.shopping.domain.dto.user.OAuth2UserDTO;
 import com.tanguri.shopping.domain.dto.user.UserModifyDto;
 import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
 import com.tanguri.shopping.domain.entity.*;
@@ -31,6 +32,18 @@ public class UserService {
         cartRepository.save(cart);
         userRepository.save(user);
     }
+    @Transactional
+    public void saveUser(OAuth2UserDTO userSignUpDto){
+        Cart cart = new Cart();
+        User user = OAuth2UserDTO.SingUpDtoToEntity(cart,userSignUpDto.getUsername()
+                ,userSignUpDto.getEmail(),userSignUpDto.getName()
+                ,userSignUpDto.getAddressNumber(),userSignUpDto.getAddress()
+                ,userSignUpDto.getDetailAddress(),userSignUpDto.getIsSeller(),userSignUpDto.getPhone());
+        cart.setUser(user);
+        cartRepository.save(cart);
+        userRepository.save(user);
+    }
+
 
     public User getUserByLoginId(String loginId) {
         return userRepository.findByLoginId(loginId).orElse(null);

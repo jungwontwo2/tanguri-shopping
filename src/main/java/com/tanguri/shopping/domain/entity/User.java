@@ -56,6 +56,21 @@ public class User {
         this.role=isSeller? "ROLE_SELLER":"ROLE_BUYER";
     }
 
+    public User(Cart cart, String username, String email, String name, String addressNumber, String address, String detailAddress, boolean isSeller, String phone) {
+        this.username=username;
+        this.email=email;
+        this.name=name;
+        this.address = address;
+        this.addressNumber = addressNumber;
+        this.detailAddress =detailAddress;
+        this.phone=phone;
+        money=0;
+        earning=0;
+        createDate=LocalDateTime.now();
+        this.cart=cart;
+        this.role=isSeller? "ROLE_SELLER":"ROLE_BUYER";
+    }
+
     public void addMoney(int amount) {
         money+=amount;
     }
