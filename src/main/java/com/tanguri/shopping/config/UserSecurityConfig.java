@@ -53,7 +53,7 @@ public class UserSecurityConfig {
         http.formLogin((auth) -> auth.loginPage("/user/login")//로그인 페이지
                 .loginProcessingUrl("/user/login")//포스트 보내면 어디로 가는지
                 .usernameParameter("username")
-                .successHandler(new CustomAuthenticationSuccessHandler())
+                .successHandler(customSuccessHandler)
                 .failureHandler(CustomAuthFailureHandler)
 //                .defaultSuccessUrl("/",false)
                 .permitAll());
@@ -69,7 +69,10 @@ public class UserSecurityConfig {
 
         http.logout((logout)->logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/")
-                .invalidateHttpSession(true));
+                .deleteCookies("Authorization")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .permitAll());
 
         http.csrf((auth)->auth.disable());
 

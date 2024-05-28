@@ -46,15 +46,27 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication!=null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken))
         {
-            CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-            String username = customOAuth2User.getUsername();
-            model.addAttribute("user", userService.findUserByUsername(username));
+            System.out.println("로그인 성공");
+            if (authentication.getPrincipal() instanceof CustomOAuth2User) {
+                CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+                String username = customOAuth2User.getUsername();
+                model.addAttribute("user", userService.findUserByUsername(username));
+            } else if (authentication.getPrincipal() instanceof CustomUserDetails) {
+                System.out.println("일반 로그인 성공");
+                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+                Long id = userDetails.getUserEntity().getId();
+                model.addAttribute("user", userService.findUser(id));
+            }
+//            CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+//            String username = customOAuth2User.getUsername();
+//            model.addAttribute("user", userService.findUserByUsername(username));
         }
-//        if (customUserDetails != null) {
-//            Long id = customUserDetails.getUserEntity().getId();
-//            model.addAttribute("user", userService.findUser(id));
-//            customUserDetails.getUserEntity().getRole();
-//        }
+        if (customUserDetails != null) {
+            System.out.println("일반 로그인 성공");
+            Long id = customUserDetails.getUserEntity().getId();
+            model.addAttribute("user", userService.findUser(id));
+            customUserDetails.getUserEntity().getRole();
+        }
         Page<PagingProductDto> allProducts = productService.getAllProducts(pageable);
 
         int blockLimit = 5;
