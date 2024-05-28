@@ -62,6 +62,9 @@ public class UserService {
     public User findUser(Long id) {
         return userRepository.findById(id).get();
     }
+    public User findUserByUsername(String username){
+        return userRepository.findByUsername(username);
+    }
 
     public Integer getMoney(Long id){
         return userRepository.findById(id).get().getMoney();

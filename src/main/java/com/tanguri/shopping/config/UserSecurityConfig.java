@@ -2,6 +2,8 @@ package com.tanguri.shopping.config;
 
 import com.tanguri.shopping.handler.CustomAuthenticationSuccessHandler;
 import com.tanguri.shopping.handler.CustomSuccessHandler;
+import com.tanguri.shopping.jwt.JWTFilter;
+import com.tanguri.shopping.jwt.JWTUtil;
 import com.tanguri.shopping.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -11,12 +13,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -28,6 +32,7 @@ public class UserSecurityConfig {
     private final AuthenticationFailureHandler CustomAuthFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final JWTUtil jwtUtil;
 
     @Bean//비밀번호 암호화
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -56,8 +61,10 @@ public class UserSecurityConfig {
         http
                 .oauth2Login((oauth2)->oauth2.userInfoEndpoint((userInfoEndpointConfig)->userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
-                        .successHandler(customSuccessHandler)
-                        .defaultSuccessUrl("/",false));
+                        .successHandler(customSuccessHandler));
+//                        .defaultSuccessUrl("/",false));
+
+        http.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 
         http.logout((logout)->logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -66,10 +73,9 @@ public class UserSecurityConfig {
 
         http.csrf((auth)->auth.disable());
 
-        //http.sessionManagement((auth) -> auth.maximumSessions(1).maxSessionsPreventsLogin(true));//true: 새로운 로그인 차단 false: 기존 세션 하나 삭제
-
-        //http.sessionManagement((session) -> session.sessionFixation((sessionFixation) -> sessionFixation.newSession()));//로그인 시 동일한 세션에 대한 id 변경
-
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }

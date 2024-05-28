@@ -1,6 +1,7 @@
 package com.tanguri.shopping.controller;
 
 import com.tanguri.shopping.domain.dto.ResponseDto;
+import com.tanguri.shopping.domain.dto.oauth2.CustomOAuth2User;
 import com.tanguri.shopping.domain.dto.product.PagingProductDto;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.dto.user.UserLoginDto;
@@ -17,8 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,11 +43,18 @@ public class UserController {
     @GetMapping("/")
     public String mainPage(@PageableDefault(page = 1) Pageable pageable,
                            Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (customUserDetails != null) {
-            Long id = customUserDetails.getUserEntity().getId();
-            model.addAttribute("user", userService.findUser(id));
-            customUserDetails.getUserEntity().getRole();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication!=null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken))
+        {
+            CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+            String username = customOAuth2User.getUsername();
+            model.addAttribute("user", userService.findUserByUsername(username));
         }
+//        if (customUserDetails != null) {
+//            Long id = customUserDetails.getUserEntity().getId();
+//            model.addAttribute("user", userService.findUser(id));
+//            customUserDetails.getUserEntity().getRole();
+//        }
         Page<PagingProductDto> allProducts = productService.getAllProducts(pageable);
 
         int blockLimit = 5;

@@ -45,7 +45,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
         User existData = userRepository.findByUsername(username);
-        System.out.println(oAuth2Response.getName());
         if(existData==null){
             OAuth2UserDTO userDTO = new OAuth2UserDTO();
             userDTO.setUsername(username);
@@ -65,8 +64,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         else {
             OAuth2UserDTO userDTO = new OAuth2UserDTO();
-            userDTO.setUsername(username);
-            userDTO.setName(oAuth2Response.getName());
+            userDTO.setUsername(existData.getUsername());
+            userDTO.setName(existData.getName());
+            userDTO.setRole(existData.getRole());
+            System.out.println("existData있음!!"+existData.getName());
             return new CustomOAuth2User(userDTO);
         }
     }

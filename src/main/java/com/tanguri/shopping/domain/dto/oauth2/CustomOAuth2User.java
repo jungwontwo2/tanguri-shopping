@@ -1,6 +1,8 @@
 package com.tanguri.shopping.domain.dto.oauth2;
 
 import com.tanguri.shopping.domain.dto.user.OAuth2UserDTO;
+import com.tanguri.shopping.domain.entity.User;
+import com.tanguri.shopping.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,7 +15,6 @@ import java.util.Map;
 public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2UserDTO userDTO;
-
     @Override
     public Map<String, Object> getAttributes() {
         return null;
@@ -23,13 +24,17 @@ public class CustomOAuth2User implements OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         Collection<GrantedAuthority> collection = new ArrayList<>();
+
         collection.add(new GrantedAuthority() {
+
             @Override
             public String getAuthority() {
+
                 return userDTO.getRole();
             }
         });
-        return null;
+
+        return collection;
     }
 
     @Override
