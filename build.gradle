@@ -44,7 +44,9 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 compileJava.options.encoding = 'UTF-8'
-
+compileJava {
+	options.compilerArgs += ['-parameters']
+}
 tasks.withType(JavaCompile){
 	options.encoding = "UTF-8"
 }

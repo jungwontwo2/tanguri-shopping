@@ -1,5 +1,6 @@
 package com.tanguri.shopping.controller;
 
+import com.tanguri.shopping.AuthenticationHelper;
 import com.tanguri.shopping.domain.dto.ResponseDto;
 import com.tanguri.shopping.domain.dto.oauth2.CustomOAuth2User;
 import com.tanguri.shopping.domain.dto.product.PagingProductDto;
@@ -39,34 +40,12 @@ public class UserController {
     private final ProductService productService;
     private final CartService cartService;
     private final OrderService orderService;
+    private final AuthenticationHelper authenticationHelper;
 
     @GetMapping("/")
     public String mainPage(@PageableDefault(page = 1) Pageable pageable,
-                           Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication!=null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken))
-        {
-            System.out.println("로그인 성공");
-            if (authentication.getPrincipal() instanceof CustomOAuth2User) {
-                CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-                String username = customOAuth2User.getUsername();
-                model.addAttribute("user", userService.findUserByUsername(username));
-            } else if (authentication.getPrincipal() instanceof CustomUserDetails) {
-                System.out.println("일반 로그인 성공");
-                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-                Long id = userDetails.getUserEntity().getId();
-                model.addAttribute("user", userService.findUser(id));
-            }
-//            CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-//            String username = customOAuth2User.getUsername();
-//            model.addAttribute("user", userService.findUserByUsername(username));
-        }
-        if (customUserDetails != null) {
-            System.out.println("일반 로그인 성공");
-            Long id = customUserDetails.getUserEntity().getId();
-            model.addAttribute("user", userService.findUser(id));
-            customUserDetails.getUserEntity().getRole();
-        }
+                           Model model) {
+        authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
         Page<PagingProductDto> allProducts = productService.getAllProducts(pageable);
 
         int blockLimit = 5;
@@ -143,7 +122,7 @@ public class UserController {
 
     @GetMapping("user/cart/{id}")
     public String cartPage(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        User user = userService.findUser(customUserDetails.getId());
+        authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
         Cart cart = userService.getCartByLoginId(id);
         List<CartItem> cartItems = cart.getCartItems();
         int totalPrice = 0;
@@ -152,7 +131,6 @@ public class UserController {
         }
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("totalProductCount", cartItems.size());
-        model.addAttribute("user", user);
         model.addAttribute("cartItems", cartItems);
         return "user/buyer/userCart";
     }
@@ -160,7 +138,7 @@ public class UserController {
     @GetMapping("user/money/{id}")
     public String moneyPage(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails,
                             Model model) {
-        User user = userService.findUser(customUserDetails.getId());
+        User user = authenticationHelper.getAuthenticatedUser().orElse(null);
         List<CartItem> cartItems = user.getCart().getCartItems();
         model.addAttribute("user", user);
         model.addAttribute("totalProductCount", cartItems.size());
@@ -169,8 +147,9 @@ public class UserController {
 
     // 잔액충전 처리
     @PostMapping("/user/charge/pro")
-    public String chargePro(int amount, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        User user = customUserDetails.getUserEntity();
+    public String chargePro(@RequestParam("amount") int amount) {
+        User user = authenticationHelper.getAuthenticatedUser().orElse(null);
+        System.out.println("user.getMoney() = " + user.getMoney());
         userService.chargeMoney(user.getId(), amount);
         return "redirect:/";
     }
@@ -178,9 +157,8 @@ public class UserController {
 
 
     @GetMapping("/seller/sellHist/{id}")
-    public String sellHistory(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                              Model model) {
-        User user = userService.findUser(customUserDetails.getId());
+    public String sellHistory(@PathVariable("id") Long id, Model model) {
+        User user = authenticationHelper.getAuthenticatedUser().orElse(null);
         List<Order> orders = orderService.getSellerItems(id);
         Integer totalSellCount = 0;
         Integer totalSellEarning = 0;
@@ -204,9 +182,8 @@ public class UserController {
         return "user/seller/sellHist";
     }
     @GetMapping("/user/{id}")
-    public String userInfo(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                           Model model){
-        User user = userService.findUser(customUserDetails.getId());
+    public String userInfo(@PathVariable("id")Long id, Model model){
+        User user = authenticationHelper.getAuthenticatedUser().orElse(null);
         List<CartItem> cartItems = user.getCart().getCartItems();
         model.addAttribute("totalProductCount",cartItems.size());
         model.addAttribute("user",user);
@@ -214,16 +191,13 @@ public class UserController {
     }
 
     @GetMapping("/user/modify/{id}")
-    public String modifyUserInfoForm(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                 Model model) {
-        User user = userService.findUser(id);
-        model.addAttribute("user",user);
+    public String modifyUserInfoForm(@PathVariable("id") Long id, Model model) {
+        authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
         return "user/userModify";
     }
     @PostMapping("/user/modify/{id}")
-    public String modifyUserInfo(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                 @ModelAttribute UserModifyDto userModifyDto){
-        User user = userService.findUser(id);
+    public String modifyUserInfo(@PathVariable("id")Long id, @ModelAttribute UserModifyDto userModifyDto){
+        User user = authenticationHelper.getAuthenticatedUser().orElse(null);
         userService.modifyUserInfo(id,userModifyDto);
         return "redirect:/user/"+id;
     }
