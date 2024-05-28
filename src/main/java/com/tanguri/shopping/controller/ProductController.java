@@ -1,11 +1,13 @@
 package com.tanguri.shopping.controller;
 
+import com.tanguri.shopping.AuthenticationHelper;
 import com.tanguri.shopping.domain.dto.product.*;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.entity.Cart;
 import com.tanguri.shopping.domain.entity.CartItem;
 import com.tanguri.shopping.domain.entity.Product;
 import com.tanguri.shopping.domain.entity.User;
+import com.tanguri.shopping.service.ImageService;
 import com.tanguri.shopping.service.OrderService;
 import com.tanguri.shopping.service.ProductService;
 import com.tanguri.shopping.service.UserService;
@@ -32,25 +34,23 @@ public class ProductController {
     private final ProductService productService;
     private final UserService userService;
     private final OrderService orderService;
+    private final ImageService imageService;
+    private final AuthenticationHelper authenticationHelper;
 
     @GetMapping("product/upload")
-    public String productUploadForm(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                    Model model, @ModelAttribute("product") AddProductDto addProductDto) {
-        Long id = customUserDetails.getUserEntity().getId();
-        model.addAttribute("user", userService.findUser(id));
+    public String productUploadForm(Model model, @ModelAttribute("product") AddProductDto addProductDto) {
+        authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
         return "user/seller/addProduct";
     }
 
     @PostMapping("product/upload")
     public String productUpload(@Validated @ModelAttribute("product") AddProductDto addProductDto, BindingResult bindingResult,
-                                @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model,
-                                HttpServletRequest request) throws IOException {
+                                 Model model, HttpServletRequest request) throws IOException {
         if (bindingResult.hasErrors()) {
-            Long id = customUserDetails.getUserEntity().getId();
-            model.addAttribute("user", userService.findUser(id));
+            authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
             return "user/seller/addProduct";
         }
-        Long productId = productService.uploadProduct(addProductDto, customUserDetails.getId());
+        Long productId = productService.uploadProduct(addProductDto, authenticationHelper.getAuthenticatedUserId());
         request.setAttribute("msg", "상품 업로드를 완료했습니다.");
         String redirectUrl = "/product/" + productId;
         request.setAttribute("redirectUrl", redirectUrl);
@@ -58,11 +58,9 @@ public class ProductController {
     }
 
     @GetMapping("product/{id}")
-    public String viewProduct(@PathVariable("id") Long id, Model model,
-                              @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                              @ModelAttribute("buyOrCartProductDto") BuyOrCartProductDto buyOrCartProductDto) {
-        if (customUserDetails != null) {
-            Long userId = customUserDetails.getUserEntity().getId();
+    public String viewProduct(@PathVariable("id") Long id, Model model, @ModelAttribute("buyOrCartProductDto") BuyOrCartProductDto buyOrCartProductDto) {
+        Long userId = authenticationHelper.getAuthenticatedUserId();
+        if(userId!=null){
             Cart cart = userService.getCartByLoginId(userId);
             List<CartItem> cartItems = cart.getCartItems();
             model.addAttribute("totalProductCount", cartItems.size());
@@ -75,10 +73,9 @@ public class ProductController {
 
     @PostMapping("product/order/{productId}")
     public String buyProduct(@PathVariable("productId") Long productId,
-                             @AuthenticationPrincipal CustomUserDetails customUserDetails,
                              @ModelAttribute("product") BuyOrCartProductDto buyOrCartProductDto,
                              HttpServletRequest request) {
-        Long id = customUserDetails.getUserEntity().getId();
+        Long id = authenticationHelper.getAuthenticatedUserId();
         Integer money = userService.getMoney(id);
         if (productService.getProduct(productId).getPrice() * buyOrCartProductDto.getCount() > money) {
             request.setAttribute("msg", "잔액이 부족합니다.\n 충전 후 다시 사용바랍니다.");
@@ -91,7 +88,7 @@ public class ProductController {
             request.setAttribute("redirectUrl", redirectUrl);
             return "common/messageRedirect";
         } else {
-            orderService.orderProduct(productId, customUserDetails.getId(), buyOrCartProductDto);
+            orderService.orderProduct(productId, id, buyOrCartProductDto);
             request.setAttribute("msg", "주문을 완료했습니다.");
             String redirectUrl = "/product/"+productId;
             request.setAttribute("redirectUrl", redirectUrl);
@@ -101,11 +98,10 @@ public class ProductController {
 
     @PostMapping("product/cart/{productId}")
     public String productInCart(@PathVariable("productId") Long productId,
-                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                 @ModelAttribute("product") BuyOrCartProductDto buyOrCartProductDto,
                                 HttpServletRequest request) {
-        Long id = customUserDetails.getUserEntity().getId();
-        productService.productInCart(productId, customUserDetails.getId(), buyOrCartProductDto);
+        Long id = authenticationHelper.getAuthenticatedUserId();
+        productService.productInCart(productId, id, buyOrCartProductDto);
         request.setAttribute("msg", "장바구니에 상품을 담았습니다.");
         String redirectUrl = "/product/"+productId;
         request.setAttribute("redirectUrl", redirectUrl);
@@ -113,10 +109,8 @@ public class ProductController {
     }
 
     @GetMapping("product/modify/{id}")
-    public String productModifyForm(@PathVariable("id")Long id, Model model,
-                                    @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        User user = userService.findUser(customUserDetails.getId());
-        model.addAttribute("user",user);
+    public String productModifyForm(@PathVariable("id")Long id, Model model){
+        authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
         ModifyProductDto product = productService.getModifyProductDto(id);
         model.addAttribute("product",product);
         return "user/seller/productModify";
@@ -124,9 +118,9 @@ public class ProductController {
     @PostMapping("product/modify/{id}")
     public String productModify(@PathVariable("id")Long id,
                                 @ModelAttribute("product")ModifyProductDto modifyProductDto,
-                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                 HttpServletRequest request) throws IOException {
-        if (customUserDetails!=null){
+        Long userId = authenticationHelper.getAuthenticatedUserId();
+        if(userId!=null){
             productService.modifyProduct(id,modifyProductDto);
             request.setAttribute("msg", "상품 정보 수정을 완료했습니다.");
             String redirectUrl = "/product/"+id;
@@ -136,10 +130,10 @@ public class ProductController {
         return "redirect:/product/"+id;
     }
     @PostMapping("product/delete/{id}")
-    public String productDelete(@PathVariable("id")Long id,@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                HttpServletRequest request){
-        if(customUserDetails!=null){
-            productService.deleteProduct(customUserDetails.getId(),id);
+    public String productDelete(@PathVariable("id")Long id, HttpServletRequest request){
+        Long userId = authenticationHelper.getAuthenticatedUserId();
+        if(userId!=null){
+            productService.deleteProduct(userId,id);
             request.setAttribute("msg", "삭제를 완료했습니다.");
             String redirectUrl = "/";
             request.setAttribute("redirectUrl", redirectUrl);
@@ -150,11 +144,10 @@ public class ProductController {
 
     @GetMapping("product/list")
     public String productList(@PageableDefault(page = 1) Pageable pageable, Model model,
-                              @AuthenticationPrincipal CustomUserDetails customUserDetails,
                               @RequestParam(name = "search",required = false)String search) {
-        if (customUserDetails != null) {
-            Long id = customUserDetails.getUserEntity().getId();
-            model.addAttribute("user", userService.findUser(id));
+        Long userId = authenticationHelper.getAuthenticatedUserId();
+        if(userId!=null){
+            authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
         }
         if(search==null){
             Page<PagingProductDto> allProducts = productService.getAllProducts(pageable);
@@ -181,9 +174,9 @@ public class ProductController {
     public String productListPopular(@PageableDefault(page = 1) Pageable pageable, Model model,
                               @AuthenticationPrincipal CustomUserDetails customUserDetails,
                               @RequestParam(name = "search",required = false)String search) {
-        if (customUserDetails != null) {
-            Long id = customUserDetails.getUserEntity().getId();
-            model.addAttribute("user", userService.findUser(id));
+        Long userId = authenticationHelper.getAuthenticatedUserId();
+        if(userId!=null){
+            authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
         }
         if(search==null){
             Page<PagingProductDto> allProducts = productService.getAllPopularProducts(pageable);

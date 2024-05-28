@@ -6,12 +6,14 @@ import com.tanguri.shopping.domain.dto.product.*;
 import com.tanguri.shopping.domain.entity.*;
 import com.tanguri.shopping.domain.enums.Status;
 import com.tanguri.shopping.repository.*;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -28,6 +30,8 @@ public class ProductService {
     private final ImageRepository imageRepository;
     private final OrderRepository orderRepository;
     private final CartItemRepository cartItemRepository;
+    private final ImageService imageService;
+    private final EntityManager entityManager;
     public Long uploadProduct(AddProductDto addProductDto,Long id) throws IOException {
         User user = userRepository.findById(id).orElse(null);
         Product product = AddProductDto.ProductDtoToProduct(addProductDto,user);
@@ -40,30 +44,7 @@ public class ProductService {
         return product.getId();
     }
 
-    private static Image getImage(MultipartFile image, Product product) throws IOException {
-        String originalFilename = image.getOriginalFilename();
-        String imgName = "";
 
-        String projectPath = "C:/Temp/productImage/";
-
-        // UUID 를 이용하여 파일명 새로 생성
-        // UUID - 서로 다른 객체들을 구별하기 위한 클래스
-        UUID uuid = UUID.randomUUID();
-
-        String savedFileName = uuid + "_" + originalFilename; // 파일명 -> imgName
-
-        imgName = savedFileName;
-
-        File saveFile = new File(projectPath, imgName);
-        image.transferTo(saveFile);
-        Image imageBuilder = Image.builder()
-                .image_url("/files/"+savedFileName)
-                .original_image_name(originalFilename)
-                .uuid_image_name(savedFileName)
-                .product(product)
-                        .build();
-        return imageBuilder;
-    }
 
     public Page<PagingProductDto> getAllProducts(Pageable pageable){
         int page = pageable.getPageNumber()-1;
@@ -127,16 +108,41 @@ public class ProductService {
         return cartItem.getId();
     }
 
+    @Transactional
     public void modifyProduct(Long id, ModifyProductDto modifyProductDto) throws IOException {
         Product product = productRepository.findById(id).orElse(null);
         Image productImage = product.getImage();
-        imageRepository.delete(productImage);
         Image image = getImage(modifyProductDto.getImgFile(), product);
-        imageRepository.save(image);
-        product.modifyProduct(modifyProductDto,image);
+        productImage.UpdateImage(image);
+        product.modifyProduct(modifyProductDto,productImage);
         productRepository.save(product);
+        imageRepository.save(productImage);
     }
 
+    private static Image getImage(MultipartFile image, Product product) throws IOException {
+        String originalFilename = image.getOriginalFilename();
+        String imgName = "";
+
+        String projectPath = "C:/Temp/productImage/";
+
+        // UUID 를 이용하여 파일명 새로 생성
+        // UUID - 서로 다른 객체들을 구별하기 위한 클래스
+        UUID uuid = UUID.randomUUID();
+
+        String savedFileName = uuid + "_" + originalFilename; // 파일명 -> imgName
+
+        imgName = savedFileName;
+
+        File saveFile = new File(projectPath, imgName);
+        image.transferTo(saveFile);
+        Image imageBuilder = Image.builder()
+                .image_url("/files/"+savedFileName)
+                .original_image_name(originalFilename)
+                .uuid_image_name(savedFileName)
+                .product(product)
+                .build();
+        return imageBuilder;
+    }
     public void deleteProduct(Long userId, Long productId) {
         Product product = productRepository.findById(productId).orElse(null);
         if(product.getUser().getId()!=userId){

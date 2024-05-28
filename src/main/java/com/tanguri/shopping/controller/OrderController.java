@@ -1,5 +1,6 @@
 package com.tanguri.shopping.controller;
 
+import com.tanguri.shopping.AuthenticationHelper;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
 import com.tanguri.shopping.domain.entity.Order;
 import com.tanguri.shopping.domain.entity.User;
@@ -20,22 +21,21 @@ import java.util.List;
 public class OrderController {
     private final UserService userService;
     private final OrderService orderService;
+    private final AuthenticationHelper authenticationHelper;
 
     //주문내역
     @GetMapping("/orderHist/{id}")
-    public String orderHistory(@PathVariable("id")Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                               Model model){
-        User user = userService.findUser(customUserDetails.getId());
-        List<Order> orders = orderService.getOrderItemsByUserId(customUserDetails.getId());
-        Integer totalOrderCount = orderService.getTotalOrderCount(customUserDetails.getId());
+    public String orderHistory(@PathVariable("id")Long id, Model model){
+        authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
+        Long userId = authenticationHelper.getAuthenticatedUserId();
+        List<Order> orders = orderService.getOrderItemsByUserId(userId);
+        Integer totalOrderCount = orderService.getTotalOrderCount(userId);
         model.addAttribute("orders",orders);
         model.addAttribute("totalOrderCount",totalOrderCount);
-        model.addAttribute("user",user);
         return "user/buyer/userOrderList";
     }
     @PostMapping("/{id}/order/cancel/{orderId}")
-    public String cancelOrder(@PathVariable("id")Long userId,@PathVariable("orderId")Long orderId,
-                              @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public String cancelOrder(@PathVariable("id")Long userId,@PathVariable("orderId")Long orderId) {
         orderService.cancelOrder(userId,orderId);
         return "redirect:/orderHist/"+userId;
     }

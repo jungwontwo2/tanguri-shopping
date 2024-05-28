@@ -24,4 +24,9 @@ public class Image {
     private String uuid_image_name;
     private String image_url;
     private String original_image_name;
+    public void UpdateImage(Image image){
+        this.uuid_image_name=image.getUuid_image_name();
+        this.image_url=image.getImage_url();
+        this.original_image_name=image.getOriginal_image_name();
+    }
 }

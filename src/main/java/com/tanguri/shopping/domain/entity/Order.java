@@ -29,7 +29,7 @@ public class Order {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @OneToOne(mappedBy = "order",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "order",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Delivery delivery;
     private Integer totalPrice;
     private Integer productCount;

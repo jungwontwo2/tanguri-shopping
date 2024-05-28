@@ -31,4 +31,19 @@ public class AuthenticationHelper {
         }
         return Optional.empty();
     }
+    public Long getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            if (authentication.getPrincipal() instanceof CustomOAuth2User) {
+                CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+                String username = customOAuth2User.getUsername();
+                return (userService.findUserByUsername(username).getId());
+            } else if (authentication.getPrincipal() instanceof CustomUserDetails) {
+                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+                Long id = userDetails.getUserEntity().getId();
+                return id;
+            }
+        }
+        return null;
+    }
 }

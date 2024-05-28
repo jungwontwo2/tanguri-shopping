@@ -60,7 +60,7 @@
             </form>
 
             <form class="d-flex" sec:authorize="hasRole('ROLE_SELLER')">
-                <a class="btn btn-outline-dark" href="#" th:text="|현재수익 : ${user.getMoney()} ₩|">
+                <a class="btn btn-outline-dark" href="#" th:text="|현재수익 : ${user.getEarning()} ₩|">
                     현재잔액 : 10000 ₩
                 </a>
                 <a class="btn btn-outline-dark" th:href="@{/seller/{id}(id=${user.getId()})}" th:text="|${user.getName()}님 환영합니다.|">
