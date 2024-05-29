@@ -54,11 +54,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDTO.setAddress(payAddress.get("baseAddress"));
             userDTO.setDetailAddress(payAddress.get("detailAddress"));
             userDTO.setPhone(payAddress.get("telNo"));
-            userDTO.setIsSeller(false);
+//            userDTO.setIsSeller(false);
             Cart cart = new Cart();
-            cartRepository.save(cart);
             User user = OAuth2UserDTO.SingUpDtoToEntity(cart, username, oAuth2Response.getEmail(), oAuth2Response.getName(), payAddress.get("zipCode")
-                    , payAddress.get("baseAddress"), payAddress.get("detailAddress"), false, payAddress.get("telNo"));
+                    , payAddress.get("baseAddress"), payAddress.get("detailAddress"), payAddress.get("telNo"));
+            cart.setUser(user);
+            cartRepository.save(cart);
             userRepository.save(user);
             return new CustomOAuth2User(userDTO);
         }

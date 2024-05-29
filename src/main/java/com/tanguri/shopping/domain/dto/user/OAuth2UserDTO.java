@@ -19,7 +19,7 @@ public class OAuth2UserDTO {
     private Boolean isSeller;
     public static User SingUpDtoToEntity(Cart cart, String username, String email, String name,
                                          String addressNumber, String address, String detailAddress,
-                                         boolean isSeller, String phone){
-        return new User(cart,username,email, name, addressNumber,address, detailAddress,isSeller, phone);
+                                         String phone){
+        return new User(cart,username,email, name, addressNumber,address, detailAddress, phone);
     }
 }

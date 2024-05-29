@@ -4,7 +4,6 @@ import com.tanguri.shopping.domain.dto.error.CustomException;
 import com.tanguri.shopping.domain.dto.error.ErrorCode;
 import com.tanguri.shopping.domain.dto.product.*;
 import com.tanguri.shopping.domain.entity.*;
-import com.tanguri.shopping.domain.enums.Status;
 import com.tanguri.shopping.repository.*;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 

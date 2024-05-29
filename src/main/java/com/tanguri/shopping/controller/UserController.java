@@ -2,34 +2,41 @@ package com.tanguri.shopping.controller;
 
 import com.tanguri.shopping.AuthenticationHelper;
 import com.tanguri.shopping.domain.dto.ResponseDto;
+import com.tanguri.shopping.domain.dto.error.CustomException;
+import com.tanguri.shopping.domain.dto.error.ErrorCode;
 import com.tanguri.shopping.domain.dto.oauth2.CustomOAuth2User;
 import com.tanguri.shopping.domain.dto.product.PagingProductDto;
-import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
-import com.tanguri.shopping.domain.dto.user.UserLoginDto;
-import com.tanguri.shopping.domain.dto.user.UserModifyDto;
-import com.tanguri.shopping.domain.dto.user.UserSignUpDto;
+import com.tanguri.shopping.domain.dto.user.*;
 import com.tanguri.shopping.domain.entity.Cart;
 import com.tanguri.shopping.domain.entity.CartItem;
 import com.tanguri.shopping.domain.entity.Order;
 import com.tanguri.shopping.domain.entity.User;
 import com.tanguri.shopping.domain.enums.Status;
+import com.tanguri.shopping.jwt.JWTUtil;
 import com.tanguri.shopping.service.*;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,10 +48,14 @@ public class UserController {
     private final CartService cartService;
     private final OrderService orderService;
     private final AuthenticationHelper authenticationHelper;
+    private final JWTUtil jwtUtil;
 
     @GetMapping("/")
     public String mainPage(@PageableDefault(page = 1) Pageable pageable,
                            Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        auth.getAuthorities().forEach(authority -> System.out.println(authority.getAuthority()));
+
         authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
         Page<PagingProductDto> allProducts = productService.getAllProducts(pageable);
 
@@ -123,7 +134,7 @@ public class UserController {
     @GetMapping("user/cart/{id}")
     public String cartPage(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
-        Cart cart = userService.getCartByLoginId(id);
+        Cart cart = userService.getCartByUserId(id);
         List<CartItem> cartItems = cart.getCartItems();
         int totalPrice = 0;
         for (CartItem cartItem : cartItems) {
@@ -200,5 +211,65 @@ public class UserController {
         User user = authenticationHelper.getAuthenticatedUser().orElse(null);
         userService.modifyUserInfo(id,userModifyDto);
         return "redirect:/user/"+id;
+    }
+    @GetMapping("/user/oauth2/isSellerSetting")
+    public String isSellerSettingForm(HttpServletRequest request){
+        Long userId = authenticationHelper.getAuthenticatedUserId();
+        String role = userService.findUser(userId).getRole();
+
+        // 세션에서 이전 페이지 정보 가져오기
+        String prevPage = (String) request.getSession().getAttribute("prevPage");
+        if(prevPage == null || prevPage.isEmpty()) {
+            prevPage = "/"; // 이전 페이지 정보가 없으면 기본 경로로 설정
+        }
+
+        if(role==null){
+            return "user/OAuth2Seller";
+        }
+        else return "redirect:"+prevPage;
+    }
+    @PostMapping("/user/oauth2/isSellerSetting")
+    public ResponseEntity<Map<String, String>> setRole(@RequestBody RoleRequest userRoleRequest, Authentication authentication, HttpServletResponse response) {
+        boolean isSeller = userRoleRequest.isSeller();
+        Long id = authenticationHelper.getAuthenticatedUser()
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
+                .getId();
+
+        // 역할 설정 로직
+        String role = isSeller ? "ROLE_SELLER" : "ROLE_BUYER";
+        userService.updateRole(id, role);
+
+        CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
+
+
+        String username = customUserDetails.getUsername();
+        String token = jwtUtil.createJwt(username, role, 60*60*60L);
+
+        response.addCookie(createCookie("Authorization", token));
+//        // 응답으로 리다이렉트 URL을 반환
+        Map<String, String> redirectUrl = new HashMap<>();
+        redirectUrl.put("redirectUrl", "/");
+        return ResponseEntity.ok(redirectUrl);
+    }
+    public static class RoleRequest {
+        private boolean isSeller;
+
+        public boolean isSeller() {
+            return isSeller;
+        }
+
+        public void setSeller(boolean seller) {
+            isSeller = seller;
+        }
+    }
+    private Cookie createCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(60*60*60);
+        //cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        return cookie;
     }
 }

@@ -60,7 +60,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //        response.sendRedirect("/");
 
         String prevPage = (String) request.getSession().getAttribute("prevPage");
-        response.sendRedirect(prevPage);
+        response.sendRedirect("/user/oauth2/isSellerSetting");
     }
 
     private static String getRole(@NotNull Authentication authentication) {

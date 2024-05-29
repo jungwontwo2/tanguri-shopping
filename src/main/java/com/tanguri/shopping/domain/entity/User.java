@@ -56,7 +56,7 @@ public class User {
         this.role=isSeller? "ROLE_SELLER":"ROLE_BUYER";
     }
 
-    public User(Cart cart, String username, String email, String name, String addressNumber, String address, String detailAddress, boolean isSeller, String phone) {
+    public User(Cart cart, String username, String email, String name, String addressNumber, String address, String detailAddress, String phone) {
         this.username=username;
         this.email=email;
         this.name=name;
@@ -68,7 +68,7 @@ public class User {
         earning=0;
         createDate=LocalDateTime.now();
         this.cart=cart;
-        this.role=isSeller? "ROLE_SELLER":"ROLE_BUYER";
+        this.role=null;
     }
 
     public void addMoney(int amount) {
@@ -88,5 +88,8 @@ public class User {
         this.address = modifyDto.getAddress();
         this.detailAddress = modifyDto.getDetailAddress();
         this.phone = modifyDto.getPhone();
+    }
+    public void updateRole(String role){
+        this.role=role;
     }
 }

@@ -61,7 +61,7 @@ public class ProductController {
     public String viewProduct(@PathVariable("id") Long id, Model model, @ModelAttribute("buyOrCartProductDto") BuyOrCartProductDto buyOrCartProductDto) {
         Long userId = authenticationHelper.getAuthenticatedUserId();
         if(userId!=null){
-            Cart cart = userService.getCartByLoginId(userId);
+            Cart cart = userService.getCartByUserId(userId);
             List<CartItem> cartItems = cart.getCartItems();
             model.addAttribute("totalProductCount", cartItems.size());
             model.addAttribute("user", userService.findUser(userId));

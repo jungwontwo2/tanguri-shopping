@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사용자 역할 선택</title>
+</head>
+<body>
+<script>
+    function chooseUserRole() {
+        const isSeller = confirm("구매자로 설정하시겠습니까? 취소를 누르면 판매자로 설정됩니다.");
+
+        // AJAX 요청을 사용하여 서버에 사용자의 역할을 전송합니다.
+        fetch('/user/oauth2/isSellerSetting', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 필요하다면, 여기에 인증 토큰을 추가합니다.
+            },
+            body: JSON.stringify({ isSeller: isSeller })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.redirectUrl) {
+                window.location.href = data.redirectUrl; // 서버에서 전달한 리다이렉트 URL로 이동
+            } else {
+                alert("역할 설정 중 오류가 발생했습니다.");
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert("역할 설정 중 오류가 발생했습니다.");
+        });
+    }
+
+    // 페이지 로드 시 역할 선택을 묻는 창을 표시합니다.
+    window.onload = function() {
+        chooseUserRole();
+    }
+</script>
+</body>
+</html>
