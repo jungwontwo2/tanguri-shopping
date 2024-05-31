@@ -35,6 +35,8 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
 
+    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private List<Rating> ratings;
     private Integer soldProductCount;
     private Integer stock;
     private String detail;
