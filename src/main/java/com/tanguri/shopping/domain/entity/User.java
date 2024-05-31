@@ -26,6 +26,8 @@ public class User {
     private List<Order> orders = new ArrayList<>();
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Comments> comments = new ArrayList<>();
     private String username;
     private String password;
     private String email;
