@@ -34,7 +34,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (principal instanceof CustomUserDetails) {
             CustomUserDetails customUserDetails = (CustomUserDetails) principal;
             // JWT 생성 및 쿠키에 저장하는 로직 등 일반 로그인 관련 처리
-            String token = jwtUtil.createJwt(customUserDetails.getUsername(),customUserDetails.getUserEntity().getRole(),60*60*60L);
+            String token = jwtUtil.createJwt(customUserDetails.getUsername(),
+                    customUserDetails.getUserEntity().getRole(),60*60*60L);
             response.addCookie(createCookie("Authorization", token));
         } else if (principal instanceof CustomOAuth2User) {
             CustomOAuth2User customOAuth2User = (CustomOAuth2User) principal;
@@ -45,20 +46,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         } else {
             throw new IllegalStateException("Unexpected authentication principal type: " + principal.getClass());
         }
-//        CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
-//
-//        String username = customUserDetails.getUsername();
-//
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-//        GrantedAuthority auth = iterator.next();
-//        String role = auth.getAuthority();
-//
-//        String token = jwtUtil.createJwt(username, role, 60*60*60L);
-//
-//        response.addCookie(createCookie("Authorization", token));
-//        response.sendRedirect("/");
-
         String prevPage = (String) request.getSession().getAttribute("prevPage");
         response.sendRedirect("/user/oauth2/isSellerSetting");
     }

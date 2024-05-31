@@ -55,14 +55,11 @@ public class UserSecurityConfig {
                 .usernameParameter("username")
                 .successHandler(customSuccessHandler)
                 .failureHandler(CustomAuthFailureHandler)
-//                .defaultSuccessUrl("/",false)
                 .permitAll());
 
-        http
-                .oauth2Login((oauth2)->oauth2.userInfoEndpoint((userInfoEndpointConfig)->userInfoEndpointConfig
-                                .userService(customOAuth2UserService))
+        http.oauth2Login((oauth2)->oauth2.userInfoEndpoint((userInfoEndpointConfig)->userInfoEndpointConfig
+                        .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler));
-//                        .defaultSuccessUrl("/",false));
 
         http.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 

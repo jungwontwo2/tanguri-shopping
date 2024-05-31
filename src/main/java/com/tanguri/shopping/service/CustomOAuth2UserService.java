@@ -32,9 +32,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String accessToken = userRequest.getAccessToken().getTokenValue();
 
         Map<String, String> payAddress = naverPayAddressService.getPayAddress(accessToken);
-        System.out.println("oAuth2User = " + oAuth2User);
-        System.out.println("payAddress = " + payAddress);
-
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
         if(registrationId.equals("naver")){
@@ -54,10 +51,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDTO.setAddress(payAddress.get("baseAddress"));
             userDTO.setDetailAddress(payAddress.get("detailAddress"));
             userDTO.setPhone(payAddress.get("telNo"));
-//            userDTO.setIsSeller(false);
             Cart cart = new Cart();
-            User user = OAuth2UserDTO.SingUpDtoToEntity(cart, username, oAuth2Response.getEmail(), oAuth2Response.getName(), payAddress.get("zipCode")
-                    , payAddress.get("baseAddress"), payAddress.get("detailAddress"), payAddress.get("telNo"));
+            User user = OAuth2UserDTO.SingUpDtoToEntity(cart, username, oAuth2Response.getEmail(), oAuth2Response.getName()
+                    , payAddress.get("zipCode"), payAddress.get("baseAddress"), payAddress.get("detailAddress"),
+                    payAddress.get("telNo"));
             cart.setUser(user);
             cartRepository.save(cart);
             userRepository.save(user);
