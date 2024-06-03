@@ -236,7 +236,7 @@ public class UserController {
                 .getId();
 
         // 역할 설정 로직
-        String role = isSeller ? "ROLE_SELLER" : "ROLE_BUYER";
+        String role = isSeller ? "ROLE_BUYER" : "ROLE_SELLER";
         userService.updateRole(id, role);
 
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
