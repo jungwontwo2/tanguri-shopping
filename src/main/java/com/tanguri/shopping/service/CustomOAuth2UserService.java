@@ -52,12 +52,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userDTO.setDetailAddress(payAddress.get("detailAddress"));
             userDTO.setPhone(payAddress.get("telNo"));
             Cart cart = new Cart();
+            cartRepository.save(cart);
             User user = OAuth2UserDTO.SingUpDtoToEntity(cart, username, oAuth2Response.getEmail(), oAuth2Response.getName()
                     , payAddress.get("zipCode"), payAddress.get("baseAddress"), payAddress.get("detailAddress"),
                     payAddress.get("telNo"));
             cart.setUser(user);
-            cartRepository.save(cart);
             userRepository.save(user);
+            cartRepository.save(cart);
             return new CustomOAuth2User(userDTO);
         }
         else {

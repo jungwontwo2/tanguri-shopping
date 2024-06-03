@@ -46,10 +46,14 @@ public class ProductController {
     @PostMapping("product/upload")
     public String productUpload(@Validated @ModelAttribute("product") AddProductDto addProductDto, BindingResult bindingResult,
                                  Model model, HttpServletRequest request) throws IOException {
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()||!addProductDto.isImageValid()) {
+            if(!addProductDto.isImageValid()){
+                bindingResult.rejectValue("image","image.valid","이미지를 업로드해주세요.");
+            }
             authenticationHelper.getAuthenticatedUser().ifPresent(user -> model.addAttribute("user",user));
             return "user/seller/addProduct";
         }
+
         Long productId = productService.uploadProduct(addProductDto, authenticationHelper.getAuthenticatedUserId());
         request.setAttribute("msg", "상품 업로드를 완료했습니다.");
         String redirectUrl = "/product/" + productId;

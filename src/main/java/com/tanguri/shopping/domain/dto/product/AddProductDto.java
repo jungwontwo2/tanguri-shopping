@@ -4,6 +4,7 @@ import com.tanguri.shopping.domain.entity.Product;
 import com.tanguri.shopping.domain.entity.User;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +19,6 @@ public class AddProductDto {
     private Integer price;
     @NotNull(message = "재고를 입력해주세요")
     private Integer stock;
-    @NotNull(message = "이미지를 업로드해주세요")
     private MultipartFile image;
 
     public static Product ProductDtoToProduct(AddProductDto addProductDto, User user){
@@ -31,5 +31,8 @@ public class AddProductDto {
                 .user(user)
                 .build();
         return product;
+    }
+    public boolean isImageValid() {
+        return image != null && !image.isEmpty() && image.getSize() > 0;
     }
 }
