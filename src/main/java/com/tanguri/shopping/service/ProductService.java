@@ -80,9 +80,12 @@ public class ProductService {
         Page<PagingProductDto> pagingProductDtos = products.map(product -> new PagingProductDto(product));
         return pagingProductDtos;
     }
-    public ViewProductDto getProduct(Long id) {
+    public ViewProductDto getViewProductDto(Long id) {
         Product product = productRepository.findById(id).orElse(null);
         return new ViewProductDto(product);
+    }
+    public Product getProduct(Long id){
+        return productRepository.findById(id).orElse(null);
     }
     public ModifyProductDto getModifyProductDto(Long id){
         Product product = productRepository.findById(id).orElse(null);

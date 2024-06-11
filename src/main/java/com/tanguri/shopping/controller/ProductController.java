@@ -1,16 +1,11 @@
 package com.tanguri.shopping.controller;
 
 import com.tanguri.shopping.AuthenticationHelper;
+import com.tanguri.shopping.domain.dto.comments.WriteCommentDto;
 import com.tanguri.shopping.domain.dto.product.*;
 import com.tanguri.shopping.domain.dto.user.CustomUserDetails;
-import com.tanguri.shopping.domain.entity.Cart;
-import com.tanguri.shopping.domain.entity.CartItem;
-import com.tanguri.shopping.domain.entity.Product;
-import com.tanguri.shopping.domain.entity.User;
-import com.tanguri.shopping.service.ImageService;
-import com.tanguri.shopping.service.OrderService;
-import com.tanguri.shopping.service.ProductService;
-import com.tanguri.shopping.service.UserService;
+import com.tanguri.shopping.domain.entity.*;
+import com.tanguri.shopping.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,6 +31,7 @@ public class ProductController {
     private final OrderService orderService;
     private final ImageService imageService;
     private final AuthenticationHelper authenticationHelper;
+    private final CommentService commentService;
 
     @GetMapping("product/upload")
     public String productUploadForm(Model model, @ModelAttribute("product") AddProductDto addProductDto) {
@@ -62,15 +58,20 @@ public class ProductController {
     }
 
     @GetMapping("product/{id}")
-    public String viewProduct(@PathVariable("id") Long id, Model model, @ModelAttribute("buyOrCartProductDto") BuyOrCartProductDto buyOrCartProductDto) {
+    public String viewProduct(@PathVariable("id") Long id, Model model,
+                              @ModelAttribute("buyOrCartProductDto") BuyOrCartProductDto buyOrCartProductDto,
+                              @ModelAttribute("Comment")WriteCommentDto writeCommentDto) {
         Long userId = authenticationHelper.getAuthenticatedUserId();
         if(userId!=null){
             Cart cart = userService.getCartByUserId(userId);
             List<CartItem> cartItems = cart.getCartItems();
             model.addAttribute("totalProductCount", cartItems.size());
             model.addAttribute("user", userService.findUser(userId));
+            model.addAttribute("currentUserId",userId);
         }
-        ViewProductDto product = productService.getProduct(id);
+        ViewProductDto product = productService.getViewProductDto(id);
+        List<Comment> comments = commentService.getCommentsByProductId(id);
+        model.addAttribute("comments",comments);
         model.addAttribute("product", product);
         return "product/ProductView";
     }
@@ -81,13 +82,13 @@ public class ProductController {
                              HttpServletRequest request) {
         Long id = authenticationHelper.getAuthenticatedUserId();
         Integer money = userService.getMoney(id);
-        if (productService.getProduct(productId).getPrice() * buyOrCartProductDto.getCount() > money) {
+        if (productService.getViewProductDto(productId).getPrice() * buyOrCartProductDto.getCount() > money) {
             request.setAttribute("msg", "잔액이 부족합니다.\n 충전 후 다시 사용바랍니다.");
             String redirectUrl = "/product/" + productId;
             request.setAttribute("redirectUrl", redirectUrl);
             return "common/messageRedirect";
-        } else if (productService.getProduct(productId).getStock() < buyOrCartProductDto.getCount()) {
-            request.setAttribute("msg", "재고가 부족합니다.\n최대 수량은" + productService.getProduct(productId).getStock() + "개 입니다");
+        } else if (productService.getViewProductDto(productId).getStock() < buyOrCartProductDto.getCount()) {
+            request.setAttribute("msg", "재고가 부족합니다.\n최대 수량은" + productService.getViewProductDto(productId).getStock() + "개 입니다");
             String redirectUrl = "/product/" + productId;
             request.setAttribute("redirectUrl", redirectUrl);
             return "common/messageRedirect";
