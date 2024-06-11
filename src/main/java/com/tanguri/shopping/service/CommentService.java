@@ -55,4 +55,14 @@ public class CommentService {
         commentEntity.setParent(findComment);
         commentRepository.save(commentEntity);
     }
+
+    public void likeComment(Long id) {
+        Comment comment = commentRepository.findById(id).orElse(null);
+        comment.addRecommend();
+        commentRepository.save(comment);
+    }
+
+    public void reportComment(Long id) {
+        commentRepository.findById(id).orElse(null).addReport();
+    }
 }

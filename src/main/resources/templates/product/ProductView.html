@@ -157,7 +157,7 @@
                 <div th:each="comment : ${comments}">
                     <div class="card mb-3" th:if="${comment.parent==null}" >
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${comment.username}">사용자 이름</h5>
+                            <h5 class="card-title" th:text="${comment.username}" th:unless="${comment.user.id==product.user.id}">사용자 이름</h5>
                             <p class="card-text" th:id="'comment-' + ${comment.id}" th:text="${comment.comment}">댓글 내용</p>
                             <p class="card-text"><small class="text-muted" th:text="${comment.createDate}">작성 날짜</small></p>
                             <div th:if="${comment.user.id==currentUserId}">
@@ -165,17 +165,25 @@
 <!--                                <button class="edit-comment" th:data-product-id th:data-comment-id="${comment.getId()}" th:data-comment-text="${comment.getComment()}">수정</button>-->
                                 <button class="btn btn-danger delete-comment" th:data-comment-id="${comment.id}" th:onclick="'deleteComment(' + ${comment.id} + ', ' + ${product.id} + ')'">삭제</button>
                             </div>
-
+                            <div>
+                                <button class="btn btn-success like-comment" th:data-product-id="${product.id}" th:data-comment-id="${comment.id}" >추천<span th:text="| ${comment.recommendCnt}|">0</span></button>
+                                <button class="btn btn-warning report-comment" th:data-product-id="${product.id}" th:data-comment-id="${comment.id}" >신고<span th:text="| ${comment.reportCnt}|">0</span></button>
+                            </div>
                             <div th:each="child : ${comment.children}" >
                                 <div class="card mt-2">
                                     <div class="card-body">
-                                        <h5 class="card-title" th:text="${child.username}">사용자 이름</h5>
+                                        <h5 class="card-title"th:unless="${child.user.id==product.user.id}" th:text="${child.username}">사용자 이름</h5>
+                                        <h5 class="card-title"th:if="${child.user.id==product.user.id}" th:text="판매자">사용자 이름</h5>
                                         <p class="card-text" th:id="'comment-' + ${child.id}" th:text="${child.comment}">댓글 내용</p>
                                         <p class="card-text"><small class="text-muted" th:text="${child.createDate}">작성 날짜</small></p>
                                         <!-- 대댓글도 수정/삭제 버튼 추가 -->
                                         <div th:if="${child.user.id == currentUserId}">
                                             <button class="btn btn-primary edit-comment" th:data-product-id="${product.id}" th:data-comment-id="${child.getId()}" th:data-comment-text="${child.getComment()}">수정</button>
                                             <button class="btn btn-danger" th:data-comment-id="${child.id}" th:onclick="'deleteComment(' + ${child.id} + ', ' + ${product.id} + ')'">삭제</button>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-success like-comment" th:data-product-id="${product.id}" th:data-comment-id="${child.id}" th:onclick="'likeComment(' + ${child.id} + ')'">추천<span th:text="| ${child.recommendCnt}|">0</span></button>
+                                            <button class="btn btn-warning report-comment" th:data-product-id="${product.id}" th:data-comment-id="${child.id}" th:onclick="'reportComment(' + ${child.id} + ')'">신고<span th:text="| ${child.reportCnt}|">0</span></button>
                                         </div>
                                     </div>
                                 </div>
@@ -264,6 +272,85 @@ alert('댓글 수정에 실패했습니다.');
         });
     }
 }
+</script>
+<script>
+<!--  function likeComment(commentId, productId) {-->
+<!--    $.ajax({-->
+<!--      url: '/comment/like/' + commentId,-->
+<!--      type: 'POST',-->
+<!--      data: {-->
+<!--        productId: productId-->
+<!--      },-->
+<!--      success: function(response) {-->
+<!--        alert('댓글을 추천했습니다.');-->
+<!--        window.location.href = '/product/' + productId; // 페이지를 새로고침하여 변경 사항 반영-->
+<!--      },-->
+<!--      error: function() {-->
+<!--        alert('추천에 실패했습니다.');-->
+<!--      }-->
+<!--    });-->
+<!--  }-->
+
+<!--  function reportComment(commentId, productId) {-->
+<!--    $.ajax({-->
+<!--      url: '/comment/report/' + commentId,-->
+<!--      type: 'POST',-->
+<!--      data: {-->
+<!--        productId: productId-->
+<!--      },-->
+<!--      success: function(response) {-->
+<!--        alert('댓글을 신고했습니다.');-->
+<!--        window.location.href = '/product/' + productId; // 페이지를 새로고침하여 변경 사항 반영-->
+<!--      },-->
+<!--      error: function() {-->
+<!--        alert('신고에 실패했습니다.');-->
+<!--      }-->
+<!--    });-->
+<!--  }-->
+
+  // 이벤트 핸들러 설정
+<!--  $(document).ready(function() {-->
+  $(document).ready(function() {
+    $('.like-comment').click(function() {
+      var commentId = $(this).data('comment-id');
+      var productId = $(this).data('product-id');
+      console.log(commentId);
+      console.log(productId);
+      $.ajax({
+        url: '/comment/like/' + commentId,
+        type: 'POST',
+        data: {
+          productId: productId
+        },
+        success: function(response) {
+          alert('댓글을 추천했습니다.');
+          window.location.href = '/product/' + productId; // 페이지를 새로고침하여 변경 사항 반영
+        },
+        error: function() {
+          alert('추천에 실패했습니다.');
+        }
+      });
+    });
+
+    $('.report-comment').click(function() {
+      var commentId = $(this).data('comment-id');
+      var productId = $(this).data('product-id');
+      $.ajax({
+        url: '/comment/report/' + commentId,
+        type: 'POST',
+        data: {
+          productId: productId
+        },
+        success: function(response) {
+          alert('댓글을 신고했습니다.');
+          window.location.href = '/product/' + productId; // 페이지를 새로고침하여 변경 사항 반영
+        },
+        error: function() {
+          alert('신고에 실패했습니다.');
+        }
+      });
+    });
+  });
 </script>
 </body>
 </html>

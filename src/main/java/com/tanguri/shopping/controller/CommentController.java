@@ -42,9 +42,23 @@ public class CommentController {
 
     @PostMapping("/comment/write/{id}")
     public String writeReply(@PathVariable("id") Long id, @RequestParam String comment,
-                             @RequestParam Long parentId,@RequestParam Long productId) {
+                             @RequestParam Long parentId, @RequestParam Long productId) {
         Long userId = authenticationHelper.getAuthenticatedUserId();
-        commentService.writeReply(id,userId,comment,parentId,productId);
+        commentService.writeReply(id, userId, comment, parentId, productId);
+        return "redirect:/product/" + productId;
+    }
+
+    @PostMapping("/comment/like/{id}")
+    public String likeComment(@PathVariable Long id,@RequestParam Long productId){
+        System.out.println("comment/like");
+        commentService.likeComment(id);
+        return "redirect:/product/"+productId;
+    }
+
+    @PostMapping("/comment/report/{id}")
+    public String reportComment(@PathVariable Long id,@RequestParam Long productId){
+        System.out.println("comment/report");
+        commentService.reportComment(id);
         return "redirect:/product/"+productId;
     }
 }

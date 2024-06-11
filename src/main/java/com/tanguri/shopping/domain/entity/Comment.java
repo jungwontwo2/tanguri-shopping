@@ -59,4 +59,10 @@ public class Comment {
     public void updateComment(String comment){
         this.comment=comment;
     }
+    public void addRecommend(){
+        this.recommendCnt+=1;
+    }
+    public void addReport(){
+        this.reportCnt+=1;
+    }
 }
