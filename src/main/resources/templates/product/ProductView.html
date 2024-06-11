@@ -155,13 +155,12 @@
                 </div>
 
                 <div th:each="comment : ${comments}">
-                    <div class="card mb-3" >
+                    <div class="card mb-3" th:if="${comment.parent==null}" >
                         <div class="card-body">
                             <h5 class="card-title" th:text="${comment.username}">사용자 이름</h5>
                             <p class="card-text" th:id="'comment-' + ${comment.id}" th:text="${comment.comment}">댓글 내용</p>
                             <p class="card-text"><small class="text-muted" th:text="${comment.createDate}">작성 날짜</small></p>
-
-                            <div th:if="${comment.user.id == currentUserId}">
+                            <div th:if="${comment.user.id==currentUserId}">
                                 <button class="btn btn-primary edit-comment" th:data-product-id="${product.id}" th:data-comment-id="${comment.getId()}" th:data-comment-text="${comment.getComment()}">수정</button>
 <!--                                <button class="edit-comment" th:data-product-id th:data-comment-id="${comment.getId()}" th:data-comment-text="${comment.getComment()}">수정</button>-->
                                 <button class="btn btn-danger delete-comment" th:data-comment-id="${comment.id}" th:onclick="'deleteComment(' + ${comment.id} + ', ' + ${product.id} + ')'">삭제</button>
@@ -175,15 +174,16 @@
                                         <p class="card-text"><small class="text-muted" th:text="${child.createDate}">작성 날짜</small></p>
                                         <!-- 대댓글도 수정/삭제 버튼 추가 -->
                                         <div th:if="${child.user.id == currentUserId}">
-                                            <button class="btn btn-primary edit-comment" th:data-comment-id="${child.getId()}" th:data-comment-text="${child.getComment()}">수정</button>
+                                            <button class="btn btn-primary edit-comment" th:data-product-id="${product.id}" th:data-comment-id="${child.getId()}" th:data-comment-text="${child.getComment()}">수정</button>
                                             <button class="btn btn-danger" th:data-comment-id="${child.id}" th:onclick="'deleteComment(' + ${child.id} + ', ' + ${product.id} + ')'">삭제</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div th:if="${comment.user.id == currentUserId or product.user.id == currentUserId}">
-                                <form th:action="@{/comments}" method="post">
+                                <form th:action="@{/comment/write/{id}(id=${comment.id})}" method="post">
                                     <input type="hidden" name="parentId" th:value="${comment.id}" />
+                                    <input type="hidden" name="productId" th:value="${product.id}" />
                                     <div class="form-group">
                                         <textarea class="form-control" name="comment" rows="2" placeholder="대댓글을 입력하세요"></textarea>
                                     </div>

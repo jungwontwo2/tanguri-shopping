@@ -47,4 +47,12 @@ public class CommentService {
     public void deleteComment(Long id) {
         commentRepository.deleteById(id);
     }
+
+    public void writeReply(Long id, Long userId, String comment, Long parentId,Long productId) {
+        Comment findComment = commentRepository.findById(id).orElse(null);
+        User user = userService.findUser(userId);
+        Comment commentEntity = new Comment(user, user.getUsername(), findComment.getProduct(), comment);
+        commentEntity.setParent(findComment);
+        commentRepository.save(commentEntity);
+    }
 }

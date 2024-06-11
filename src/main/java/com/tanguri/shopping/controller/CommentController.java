@@ -12,29 +12,39 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentService;
     private final AuthenticationHelper authenticationHelper;
+
     @PostMapping("/comment/write")
     public String writeComment(@ModelAttribute("Comment") WriteCommentDto writeCommentDto, @RequestParam("productId") Long productId) {
         Long userId = authenticationHelper.getAuthenticatedUserId();
-        if(userId!=null){
-            commentService.writeComment(writeCommentDto.getComment(), productId,userId);
+        if (userId != null) {
+            commentService.writeComment(writeCommentDto.getComment(), productId, userId);
         }
         // 댓글 저장 로직 추가
 
         // 원래 상품 페이지로 리다이렉트
         return "redirect:/product/" + productId;
     }
+
     @PostMapping("/comment/update/{id}")
     public String updateComment(@PathVariable Long id,
                                 @RequestParam("text") String updatedComment,
-                                @RequestParam("productId") Long productId){
-        commentService.updateComment(updatedComment,id);
-        return "redirect:/product/"+productId;
+                                @RequestParam("productId") Long productId) {
+        commentService.updateComment(updatedComment, id);
+        return "redirect:/product/" + productId;
     }
 
     @PostMapping("comment/delete/{id}")
     public String deleteComment(@PathVariable Long id,
-                                @RequestParam("productId")Long productId) {
+                                @RequestParam("productId") Long productId) {
         commentService.deleteComment(id);
+        return "redirect:/product/" + productId;
+    }
+
+    @PostMapping("/comment/write/{id}")
+    public String writeReply(@PathVariable("id") Long id, @RequestParam String comment,
+                             @RequestParam Long parentId,@RequestParam Long productId) {
+        Long userId = authenticationHelper.getAuthenticatedUserId();
+        commentService.writeReply(id,userId,comment,parentId,productId);
         return "redirect:/product/"+productId;
     }
 }
