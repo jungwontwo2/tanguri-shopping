@@ -26,7 +26,7 @@ public class CommentService {
         commentRepository.save(comment);
     }
     public List<Comment> getCommentsByProductId(Long productId){
-        return commentRepository.findByProductId(productId);
+        return commentRepository.findByProductIdWithChildren(productId);
     }
 
     public void updateComment(String updatedComment, Long id) {

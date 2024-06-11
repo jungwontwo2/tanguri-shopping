@@ -10,4 +10,7 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("select c from Comment c where c.product.id = :productId")
     List<Comment> findByProductId(@Param("productId") Long productId);
+
+    @Query("select c from Comment c join fetch c.children where c.product.id = :productId")
+    List<Comment> findByProductIdWithChildren(@Param("productId") Long productId);
 }

@@ -181,10 +181,10 @@
                                 </div>
                             </div>
                             <div th:if="${comment.user.id == currentUserId or product.user.id == currentUserId}">
-                                <form th:action="@{/comment/write/{id}(id=${comment.id})}" method="post">
+                                <form th:action="@{/comment/write/{id}(id=${comment.id})}" method="post" th:if="${comment.user.id == currentUserId or product.user.id == currentUserId}">
                                     <input type="hidden" name="parentId" th:value="${comment.id}" />
                                     <input type="hidden" name="productId" th:value="${product.id}" />
-                                    <div class="form-group">
+                                    <div class="form-group" >
                                         <textarea class="form-control" name="comment" rows="2" placeholder="대댓글을 입력하세요"></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-secondary">대댓글 작성</button>
