@@ -22,7 +22,7 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
-    @OneToMany(mappedBy = "parent",orphanRemoval = true)
+    @OneToMany(mappedBy = "parent",orphanRemoval = true,fetch = FetchType.LAZY)
     private List<Comment> children = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
